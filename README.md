@@ -41,8 +41,11 @@ Compile the sketch using Arduino IDE. You need:
   
 **Options (first lines of the sketch):**  
   
-For RGB strip like WS8212b comment it, leave it for RGBW SK6812:  
+For RGB strip like WS8212b delete it or comment it with '//', leave it for RGBW SK6812:  
 *#define   THIS_IS_RGBW*  
+  
+SPI: for APA102/SK9822/HD107 delete it or comment it with '//', leave it for WS2801:  
+*#define   is_WS2801*
   
 Skip first led in the strip, that is used as level shifter:  
 *bool      skipFirstLed = true;*  
