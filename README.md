@@ -7,6 +7,14 @@ Exposes USB high speed serial port at 2Mb baud for driving led strip using NeoPi
 There is also my fork named HyperSerialWLED available with the support for the AWA serial protocol at @2Mb speed for both ESP8266 and ESP32: https://github.com/awawa-dev/HyperSerialWLED Can't guarantee it will work as stable as HyperSerialESP32 because WLED has a lot of other things to do in the backgrounds (ex. handling Wifi) and timing control for the serial port could be at danger for larger number of LEDs. But you don't need to abandon all the benefits offered by the WLED which can be a big advantage for some users.  
   
 RGB to RGBW conversion is calibrated for the neutral white channel BTF SK6812 but it can be easily changed (for cool and warm temperature) in the code. Search for "color calibration". In HyperHDR use "1.5" gamma for red, blue and green for best effect in the "Image Processing" tab.
+
+
+| LED strip / Device             | HyperSerialESP32 |
+|--------------------------------|:----------------:|
+| SK6812 cold white              |       yes        |
+| SK6812 neutral white           |       yes        |
+| WS281x                         |       yes        |
+| SPI (APA102, SK9812, HD107...) |       yes        |
   
 # Data integrity check
   
