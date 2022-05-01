@@ -52,6 +52,9 @@ Compile the sketch using Arduino IDE. You need:
 For RGB strip like WS8212b delete it or comment it with '//', leave it for RGBW SK6812:  
 *#define   THIS_IS_RGBW*  
   
+For RGBW cold white LED strip version if above declaration is defined, delete it or comment it with '//' for RGBW neutral:  
+*#define   COLD_WHITE*  
+  
 SPI: for APA102/SK9822/HD107 delete it or comment it with '//', leave it for WS2801:  
 *#define   is_WS2801*
   
