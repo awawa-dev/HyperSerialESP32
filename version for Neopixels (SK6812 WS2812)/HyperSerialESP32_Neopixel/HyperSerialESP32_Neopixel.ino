@@ -12,6 +12,9 @@ int serialSpeed = 2000000; // serial port speed
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////            CONFIG SECTION ENDS               /////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+#if ESP_ARDUINO_VERSION_MAJOR >= 2
+    #error "Please use esp32 board manager version 1.x. Versions 2.x and above are unsupported."
+#endif
 
 #ifdef THIS_IS_RGBW
 	float whiteLimit = 1.0f;
@@ -66,7 +69,7 @@ enum class AwaProtocol
 };
 
 // static data buffer for the loop
-#define MAX_BUFFER 2048
+#define MAX_BUFFER 4096
 uint8_t buffer[MAX_BUFFER];
 AwaProtocol state = AwaProtocol::HEADER_A;
 bool version2 = false;
@@ -136,14 +139,11 @@ void readSerialData()
 		stat_good = 0;
 		stat_frames = 0;
 
-		Serial.write("HyperSerialESP32 version 6.\r\nStatistics for the last full 1 second cycle.\r\n");
-		Serial.write("Frames per second: ");
-		Serial.print(stat_final_frames);
-		Serial.write("\r\nGood frames: ");
-		Serial.print(stat_final_good);
-		Serial.write("\r\nBad frames:  ");
-		Serial.print(stat_final_frames - stat_final_good);
-		Serial.write("\r\n-------------------------\r\n");
+	    Serial.println((String)"HyperSerialESP32 version 6.1\r\nStatistics for the last full 1 second cycle."+
+		                (String)"\r\nFrames per second: "+ stat_final_frames +
+                        (String)"\r\nGood frames: "+ stat_final_good  +
+                        (String)"\r\nBad frames:  " + (int)(stat_final_frames - stat_final_good) + 
+                        (String)"\r\n-------------------------");
 	}
 
 	if (state == AwaProtocol::HEADER_A)
@@ -353,7 +353,7 @@ void setup()
 	// Init serial port
 	Serial.begin(serialSpeed);
 	Serial.setTimeout(50);
-	Serial.setRxBufferSize(2048);
+	Serial.setRxBufferSize(MAX_BUFFER);
 
 	// Display config
 	Serial.write("\r\nWelcome!\r\nAwa driver 6.\r\n");
