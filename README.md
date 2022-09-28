@@ -36,10 +36,10 @@ esphome-flasher is recommended.
   
 # Usage in HyperHDR
   
-Watch out for latch time, don't go above 15ms as it will affect communication performance.  
-Switch to "Expert" level settings to have all following options visible.  
-  
-![obraz](https://user-images.githubusercontent.com/69086569/130987180-f12fb88e-850a-4fc3-8ea8-3579d900059a.png)
+Make sure you set "Refresh time" to zero, "Baudrate" to 2000000 and enabled HyperHDR's AWA protocol.  
+Enabling "White channel calibration" is optional, if you want to fine tune the white channel balance of your sk6812 RGBW LED strip.  
+
+![obraz](https://user-images.githubusercontent.com/69086569/192893595-324cfcf8-e247-438c-88ce-e52a29463121.png)
    
 # Compiling
   
