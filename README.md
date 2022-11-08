@@ -22,17 +22,19 @@ Why the data integrity check was introduced which causes incompatibility with ot
   
 # Flashing
   
-For **RGBW LED strip** like RGBW SK6812 NEUTRAL white choose: *HyperSerialESP32_SK6812_NEUTRAL_WHITE_FIRSTLED_xxxxxx.bin*  
+Recommend to use [esphome-flasher](https://github.com/esphome/esphome-flasher/releases)  
+
+For **RGBW LED strip** like RGBW SK6812 NEUTRAL white choose: *firmware_SK6812_RGBW_NEUTRAL.bin*  
   
-For **RGBW LED strip** like RGBW SK6812 COLD white choose: *HyperSerialESP32_SK6812_COLD_WHITE_FIRSTLED_xxxxxx.bin*  
+For **RGBW LED strip** like RGBW SK6812 COLD white choose: *firmware_SK6812_RGBW_COLD.bin*  
   
-For **RGB LED strip** like WS8212b or WS8213 choose: *HyperSerialESP32_WS821x_FIRSTLED_xxxxxx.bin*  
+For **RGB LED strip** like WS8212b or RGB SK6812 variant choose: *firmware_WS281x_RGB.bin*  
   
-For **SPI driven RGB LED strip** APA102: *HyperSerialESP32_APA102_FIRSTLED_xxxxxx.bin*, WS8201: *HyperSerialESP32_WS8201_rbg_FIRSTLED_xxxxxx.bin*  
+For **SPI driven RGB LED strip** APA102: *firmware_SPI_APA102_SK9822_HD107.bin*, WS8201: *firmware_SPI_WS2801.bin*  
   
-If the first LED in the strip should be enabled or set to black is your choice.  
+If you want to disable your first LED because it's used as a sacrificial level shifter, please use [HyperHDR v19](https://github.com/awawa-dev/HyperHDR/pull/379)  
+
 For the RGBW firmware the white channel is automatically calculated and R,G,B channels are corrected.  
-esphome-flasher is recommended.  
   
 # Usage in HyperHDR
   
@@ -43,28 +45,10 @@ Enabling "White channel calibration" is optional, if you want to fine tune the w
    
 # Compiling
   
-Compile the sketch using Arduino IDE. You need:  
-- https://github.com/espressif/arduino-esp32 (boards for ESP32)  
-- Makuna/NeoPixelBus (install from Arduino IDE: manage libraries)  
-  
-**Options (first lines of the sketch):**  
-  
-For RGB strip like WS8212b delete it or comment it with '//', leave it for RGBW SK6812:  
-*#define   THIS_IS_RGBW*  
-  
-For RGBW cold white LED strip version if above declaration is defined, delete it or comment it with '//' for RGBW neutral:  
-*#define   COLD_WHITE*  
-  
-SPI: for APA102/SK9822/HD107 delete it or comment it with '//', leave it for WS2801:  
-*#define   is_WS2801*
-  
-Skip first led in the strip, that is used as level shifter:  
-*bool      skipFirstLed = true;*  
-  
-Serial port speed:  
-*int       serialSpeed = 2000000;*  
-  
-Don't change LED's count as it is dynamic.  
+Currently we use PlatformIO to compile the project. Install [Visual Studio Code](https://code.visualstudio.com/) and add [PlatformIO plugin](https://platformio.org/).
+This environment will take care of everything and compile the firmware for you.
+
+But there is also an alternative and an easier way. Just fork the project and enable its Github Action. Use the online editor to make changes to the ```platformio.ini``` file, for example change default pin-outs, and save it. Github Action will compile new firmware automatically in the Artifacts archive. It has never been so easy!
   
 # Pinout
   

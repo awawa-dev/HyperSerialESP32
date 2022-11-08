@@ -1,0 +1,88 @@
+name: HyperSerialEsp8266 CI Build
+
+on: [push]
+
+jobs:
+
+######################
+#### PlatformIO ######
+######################
+
+  PlatformIO:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v3
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.x
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+    - name: Run PlatformIO
+      run: pio run
+    - uses: actions/upload-artifact@v3
+      name: Upload artifacts (commit)
+      if: (startsWith(github.event.ref, 'refs/tags') != true)
+      with:
+        path: |
+          .pio/build/*.bin
+
+    - uses: actions/upload-artifact@v3
+      name: Upload artifacts (release)
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        name: firmware-release
+        path: |
+          .pio/build/*.bin
+
+################################
+###### Publish Releases ########
+################################
+
+  publish:
+    name: Publish Releases
+    if: startsWith(github.event.ref, 'refs/tags')
+    needs: [PlatformIO]
+    runs-on: ubuntu-latest
+    steps:
+      # generate environment variables
+      - name: Generate environment variables from version and tag
+        run: |
+          echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+          echo "preRelease=false" >> $GITHUB_ENV
+
+      # If version contains alpha or beta, mark draft release as pre-release
+      - name: Mark release as pre-release
+        if: contains(env.VERSION, 'alpha') || contains(env.VERSION, 'beta')
+        run: echo "preRelease=true" >> $GITHUB_ENV
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: firmware-release
+
+      # create draft release and upload artifacts
+      - name: Create draft release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: HyperSerialEsp8266 ${{ env.VERSION }}
+          tag_name: ${{ env.TAG }}
+          files: |
+            *.bin
+          draft: true
+          prerelease: ${{ env.preRelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
