@@ -426,7 +426,7 @@ void setup()
 	// Init serial port
 	Serial.begin(SERIALCOM_SPEED);
 	Serial.setTimeout(50);
-	Serial.setRxBufferSize(2048);
+	Serial.setRxBufferSize(MAX_BUFFER);
 
 	// Display config
 	Serial.println("\r\nWelcome!\r\nAwa driver 7.");
