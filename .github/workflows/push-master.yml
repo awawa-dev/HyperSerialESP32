@@ -1,4 +1,4 @@
-name: HyperSerialEsp8266 CI Build
+name: HyperSerialESP32 CI Build
 
 on: [push]
 
