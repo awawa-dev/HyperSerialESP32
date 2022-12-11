@@ -142,6 +142,7 @@ void setup()
 {
 	// Init serial port
 	Serial.setRxBufferSize(MAX_BUFFER);
+	Serial.setTimeout(50);
 	Serial.begin(SERIALCOM_SPEED);
 	while (!Serial) continue;
 
@@ -161,7 +162,7 @@ void setup()
 			#else
 				calibrationConfig.setParamsAndPrepareCalibration(0xFF, 0xB0, 0xB0, 0x70);
 				Serial.println("NeoPixelBus SK6812 neutral GRBW.");
-			#endif			
+			#endif
 			calibrationConfig.printCalibration();
 		#else
 			Serial.println("NeoPixelBus ws281x type (GRB).");
