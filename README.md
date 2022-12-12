@@ -24,13 +24,17 @@ Why the data integrity check was introduced which causes incompatibility with ot
   
 Recommend to use [esphome-flasher](https://github.com/esphome/esphome-flasher/releases)  
 
-For **RGBW LED strip** like RGBW SK6812 NEUTRAL white choose: *firmware_SK6812_RGBW_NEUTRAL.bin*  
+ESP32-S2 lolin mini requires special firmware version (also provided)
+
+Generic ESP32:
+
+For **RGBW LED strip** like RGBW SK6812 NEUTRAL white choose: *firmware_esp32_SK6812_RGBW_NEUTRAL.bin*  
   
-For **RGBW LED strip** like RGBW SK6812 COLD white choose: *firmware_SK6812_RGBW_COLD.bin*  
+For **RGBW LED strip** like RGBW SK6812 COLD white choose: *firmware_esp32_SK6812_RGBW_COLD.bin*  
   
-For **RGB LED strip** like WS8212b or RGB SK6812 variant choose: *firmware_WS281x_RGB.bin*  
+For **RGB LED strip** like WS8212b or RGB SK6812 variant choose: *firmware_esp32_WS281x_RGB.bin*  
   
-For **SPI driven RGB LED strip** APA102: *firmware_SPI_APA102_SK9822_HD107.bin*, WS8201: *firmware_SPI_WS2801.bin*  
+For **SPI driven RGB LED strip** APA102: *firmware_esp32_SPI_APA102_SK9822_HD107.bin*, WS8201: *firmware_esp32_SPI_WS2801.bin*  
   
 If you want to disable your first LED because it's used as a sacrificial level shifter, please use [HyperHDR v19](https://github.com/awawa-dev/HyperHDR/pull/379)  
 
@@ -66,7 +70,7 @@ ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin min
 |----------------------------------------------------------------------------------|--------------------------|
 | 300LEDs<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=150 |            93-97         |
 | 600LEDs<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=300 |            78-79         |
-| 900LEDs<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=450 |            55-56           |
+| 900LEDs<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=450 |            55-56         |
 
 ## Comparing v6.1 and v8 version (single segment) refresh rate using MH-ET LIVE mini
 
