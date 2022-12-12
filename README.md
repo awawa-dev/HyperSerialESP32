@@ -44,7 +44,7 @@ For the RGBW firmware the white channel is automatically calculated and R,G,B ch
   
 Make sure you set `Refresh time` to zero, `Baudrate` to 2000000 and you enabled `HyperHDR's AWA protocol`.  
 Enabling `White channel calibration` is optional, if you want to fine tune the white channel balance of your sk6812 RGBW LED strip.  
-`ESP8266/ESP32 handshake` could help you to properly initialize the ESP device and enables statistics available in the logs (you must stop th LED device first to get them).  
+`ESP8266/ESP32 handshake` could help you to properly initialize the ESP device and enables statistics available in the logs (you must stop the LED device first to get them).  
 
 ![obraz](https://user-images.githubusercontent.com/69086569/207076047-42f4e4f4-9724-475c-b781-186878d214fc.png)
    
