@@ -25,7 +25,14 @@
 *  SOFTWARE.
  */
 
-#ifndef CALIBRATION_H
+#ifdef NEOPIXEL_RGBW
+	typedef RgbwColor ColorDefinition;
+#else
+	typedef RgbColor ColorDefinition;
+#endif
+
+
+#if !defined(CALIBRATION_H) && (defined(NEOPIXEL_RGBW) || defined(HYPERSERIAL_TESTING))
 #define CALIBRATION_H
 
 #include <stdint.h>
@@ -33,40 +40,33 @@
 
 #define ROUND_DIVIDE(numer, denom) (((numer) + (denom) / 2) / (denom))
 
-struct {
-		uint8_t white[256];
-		uint8_t red[256];
-		uint8_t green[256];
-		uint8_t blue[256];
+struct
+{
+	uint8_t white[256];
+	uint8_t red[256];
+	uint8_t green[256];
+	uint8_t blue[256];
 } channelCorrection;
 
-struct {
-	uint8_t gain = 0xFF;
-	#ifdef COLD_WHITE
-		uint8_t red = 0xA0;   // adjust red   -> white in 0-0xFF range
-		uint8_t green = 0xA0; // adjust green -> white in 0-0xFF range
-		uint8_t blue = 0xA0;  // adjust blue  -> white in 0-0xFF range
-	#else
-		uint8_t red = 0xB0;   // adjust red   -> white in 0-0xFF range
-		uint8_t green = 0xB0; // adjust green -> white in 0-0xFF range
-		uint8_t blue = 0x70;  // adjust blue  -> white in 0-0xFF range
-	#endif
+class CalibrationConfig
+{
+	// calibration parameters
+	uint8_t gain = 0xFF;	
+	uint8_t red = 0xA0;
+	uint8_t green = 0xA0;
+	uint8_t blue = 0xA0;
 
-	void setParams(uint8_t _gain, uint8_t _red, uint8_t _green, uint8_t _blue)
-	{
-		gain = _gain;
-		red = _red;
-		green = _green;
-		blue = _blue;
-	}
-
+	/**
+	 * @brief Build the LUT table using provided parameters
+	 * 
+	 */
 	void prepareCalibration()
 	{	
 		// prepare LUT calibration table, cold white is much better than "neutral" white
 		for (uint32_t i = 0; i < 256; i++)
 		{
 			// color calibration
-			uint32_t _gain = uint32_t(gain) * i;  // adjust gain
+			uint32_t _gain = gain * i;   // adjust gain
 			uint32_t _red = red * i;     // adjust red
 			uint32_t _green = green * i; // adjust green
 			uint32_t _blue = blue * i;   // adjust blue
@@ -77,6 +77,59 @@ struct {
 			channelCorrection.blue[i]  = (uint8_t)std::min(ROUND_DIVIDE(_blue, 0xFF), (uint32_t)0xFF);
 		}
 	}
+	
+	public:
+		CalibrationConfig()
+		{
+			prepareCalibration();
+		}
+
+		/**
+		 * @brief Compare base calibration settings
+		 * 
+		 */
+		bool compareCalibrationSettings(uint8_t _gain, uint8_t _red, uint8_t _green, uint8_t _blue)
+		{
+			return _gain == gain && _red == red && _green == green && _blue == blue;
+		}
+
+		/**
+		 * @brief Set the parameters that define RGB to RGBW transformation
+		 * 
+		 * @param _gain 
+		 * @param _red 
+		 * @param _green 
+		 * @param _blue 
+		 */
+		void setParamsAndPrepareCalibration(uint8_t _gain, uint8_t _red, uint8_t _green, uint8_t _blue)
+		{
+			if (gain != _gain || red != _red || green != _green || blue != _blue)
+			{
+				gain = _gain;
+				red = _red;
+				green = _green;
+				blue = _blue;
+				prepareCalibration();
+			}			
+		}		
+
+		/**
+		 * @brief print RGBW calibration parameters when no data is received
+		 * 
+		 */
+		void printCalibration()
+		{
+			#ifdef SerialPort			
+				SerialPort.write("\r\nRGBW => Gain: ");
+				SerialPort.print(gain);
+				SerialPort.write("/255, red: ");
+				SerialPort.print(red);
+				SerialPort.write(" , green: ");
+				SerialPort.print(green);
+				SerialPort.write(" , blue: ");
+				SerialPort.print(blue);
+			#endif
+		}
 } calibrationConfig;
 #endif
 
