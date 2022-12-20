@@ -72,6 +72,28 @@ Tutorial: https://github.com/awawa-dev/HyperSerialESP32/wiki
 **LED output (non-SPI):** GPIO 2  
 **LED output (SPI):** GPIO 4 for Clock, GPIO 2 for Data  
 
+
+# Multi-Segment Wiring
+
+To create a two-segment LED Hardware device, you'll need to split your LED strip into parts (generally equal length). 
+> Example: If you have 288 LEDs in your strip, you'd split it into two 144 LED strips. 
+This split can be anywhere along your strip. Some suggested locations are at the bottom middle, or in a corner. To keep the wiring closer together, it is recommended to have your strips mirror out from each other in opposite directions (there's a flag to set in the `platformio.ini` for this).
+
+Once you know how many lights will be in your strips, you need to create a new custom build of the firmware for yourself. First, change a few items in the `platformio.ini` (review the comments at the top of the file):
+* `SECOND_SEGMENT_START_INDEX` - the start of your second strip (usually half of your total LED count)
+* `SECOND_SEGMENT_CLOCK_PIN` and `SECOND_SEGMENT_DATA_PIN` - These are the clock & data pins for your second strip
+* `SECOND_SEGMENT_REVERSED` - if you've mirrored your layout, you'll want to set this
+
+You can add these to either your board's config, or to the overall build in the `[env]` section. Be sure to put `-D` in front of each setting. 
+
+Example:
+```
+[env]
+framework = arduino
+extra_scripts = pre:extra_script.py
+build_flags = -DSERIALCOM_SPEED=2000000 -DSECOND_SEGMENT_START_INDEX=145 -DSECOND_SEGMENT_DATA_PIN=5 -DSECOND_SEGMENT_REVERSED
+```
+
 # Some benchmark results
 
 ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin mini is capable of 5Mb. But to give equal chances all models were tested using the default speed of 2Mb.
