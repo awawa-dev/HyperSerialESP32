@@ -72,6 +72,32 @@ Tutorial: https://github.com/awawa-dev/HyperSerialESP32/wiki
 **LED output (non-SPI):** GPIO 2  
 **LED output (SPI):** GPIO 4 for Clock, GPIO 2 for Data  
 
+
+# Multi-Segment Wiring
+
+Proposed example of building a multisegment:
+- Divide a long or dense strip of LEDs into 2 smaller equal parts. So `SECOND_SEGMENT_START_INDEX` in the HyperSerialESP32 firmware is the total number of LEDs divided by 2.
+- Build your first segment traditional way e.g. clockwise, so it starts somewhere in middle of the bottom of frame/TV and ends in the middle of the top of frame/TV
+- Start the second segment in the opposite direction to the first one e.g. counterclockwise (`SECOND_SEGMENT_REVERSED` option in the HyperSerialESP32 firmware configuration must be enabled). So it starts somewhere in the middle of the bottom of the frame/TV and ends in the middle of the top of the TV/frame. Both segments should be connected at the top but only 5v and ground ( NOT the data line).
+- The data line starts for both segments somewhere in the middle of the bottom of the TV/frame (where each of the LED strips starts)
+- Configuration in HyperHDR does not change! It's should be configured as one, single continues segment. All is done in HyperSerialESP32 firmware transparently and does not affect LED strip configuration in HyperHDR.
+
+You also must configure data pin (and clock pin for SPI LEDs) in the `platformio.ini`. Review the comments at the top of the file:
+* `SECOND_SEGMENT_DATA_PIN` - These is data pin for your second strip
+* `SECOND_SEGMENT_CLOCK_PIN` - These is clock pin for your second strip (SPI LEDs only, not for sk6812/ws2812b etc)
+
+You add these to your board's config. Be sure to put `-D` in front of each setting. 
+
+Examples of final build_flags for 288 LEDs divided into 2 equal segments in the `platformio.ini`:
+```
+[env:SK6812_RGBW_COLD]
+build_flags = -DNEOPIXEL_RGBW -DCOLD_WHITE -DDATA_PIN=2 ${env.build_flags} -DSECOND_SEGMENT_START_INDEX=144 -DSECOND_SEGMENT_DATA_PIN=4 -DSECOND_SEGMENT_REVERSED
+...
+[env:WS281x_RGB]
+build_flags = -DNEOPIXEL_RGB -DDATA_PIN=2 ${env.build_flags} -DSECOND_SEGMENT_START_INDEX=144 -DSECOND_SEGMENT_DATA_PIN=4 -DSECOND_SEGMENT_REVERSED
+...
+```
+
 # Some benchmark results
 
 ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin mini is capable of 5Mb. But to give equal chances all models were tested using the default speed of 2Mb.
