@@ -75,23 +75,27 @@ Tutorial: https://github.com/awawa-dev/HyperSerialESP32/wiki
 
 # Multi-Segment Wiring
 
-To create a two-segment LED Hardware device, you'll need to split your LED strip into parts (generally equal length). 
-> Example: If you have 288 LEDs in your strip, you'd split it into two 144 LED strips. 
-This split can be anywhere along your strip. Some suggested locations are at the bottom middle, or in a corner. To keep the wiring closer together, it is recommended to have your strips mirror out from each other in opposite directions (there's a flag to set in the `platformio.ini` for this).
+Proposed example of building a multisegment:
+- Divide a long or dense strip of LEDs into 2 smaller equal parts. So `SECOND_SEGMENT_START_INDEX` in the HyperSerialESP32 firmware is the total number of LEDs divided by 2.
+- Build your first segment traditional way e.g. clockwise, so it starts somewhere in middle of the bottom of frame/TV and ends in the middle of the top of frame/TV
+- Start the second segment in the opposite direction to the first one e.g. counterclockwise (`SECOND_SEGMENT_REVERSED` option in the HyperSerialESP32 firmware configuration must be enabled). So it starts somewhere in the middle of the bottom of the frame/TV and ends in the middle of the top of the TV/frame. Both segments should be connected at the top but only 5v and ground ( NOT the data line).
+- The data line starts for both segments somewhere in the middle of the bottom of the TV/frame (where each of the LED strips starts)
+- Configuration in HyperHDR does not change! It's should be configured as one, single continues segment. All is done in HyperSerialESP32 firmware transparently and does not affect LED strip configuration in HyperHDR.
 
-Once you know how many lights will be in your strips, you need to create a new custom build of the firmware for yourself. First, change a few items in the `platformio.ini` (review the comments at the top of the file):
-* `SECOND_SEGMENT_START_INDEX` - the start of your second strip (usually half of your total LED count)
-* `SECOND_SEGMENT_CLOCK_PIN` and `SECOND_SEGMENT_DATA_PIN` - These are the clock & data pins for your second strip
-* `SECOND_SEGMENT_REVERSED` - if you've mirrored your layout, you'll want to set this
+You also must confiure data pin (and clock pin for SPI LEDs) in the `platformio.ini`. Review the comments at the top of the file:
+* `SECOND_SEGMENT_DATA_PIN` - These is data pin for your second strip
+* `SECOND_SEGMENT_CLOCK_PIN` - These is clock pin for your second strip (SPI LEDs only, not for sk6812/ws2812b etc)
 
-You can add these to either your board's config, or to the overall build in the `[env]` section. Be sure to put `-D` in front of each setting. 
+You add these to your board's config. Be sure to put `-D` in front of each setting. 
 
-Example:
+Examples of build_flags for 288 LEDs divided into 2 equal segments in the `platformio.ini`:
 ```
-[env]
-framework = arduino
-extra_scripts = pre:extra_script.py
-build_flags = -DSERIALCOM_SPEED=2000000 -DSECOND_SEGMENT_START_INDEX=145 -DSECOND_SEGMENT_DATA_PIN=5 -DSECOND_SEGMENT_REVERSED
+[env:SK6812_RGBW_COLD]
+build_flags = -DNEOPIXEL_RGBW -DCOLD_WHITE -DDATA_PIN=2 ${env.build_flags} -DSECOND_SEGMENT_START_INDEX=144 -DSECOND_SEGMENT_DATA_PIN=4 -DSECOND_SEGMENT_REVERSED
+...
+[env:WS281x_RGB]
+build_flags = -DNEOPIXEL_RGB -DDATA_PIN=2 ${env.build_flags} -DSECOND_SEGMENT_START_INDEX=144 -DSECOND_SEGMENT_DATA_PIN=4 -DSECOND_SEGMENT_REVERSED
+...
 ```
 
 # Some benchmark results
