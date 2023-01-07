@@ -51,7 +51,7 @@ class Base
 		// static data buffer for the loop
 		uint8_t buffer[MAX_BUFFER];
 		// handle to tasks
-		TaskHandle_t processTaskHandle;
+		TaskHandle_t processTaskHandle = nullptr;
 		// current queue position
 		uint16_t queueCurrent = 0;
 		// queue end position

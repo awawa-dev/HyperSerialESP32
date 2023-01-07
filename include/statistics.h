@@ -128,14 +128,16 @@ class
 			SerialPort.print(finalGoodFrames);				
 			SerialPort.write(", incompl.: ");
 			SerialPort.print(finalTotalFrames - finalGoodFrames);
-			SerialPort.write(", mem: ");
-			SerialPort.print(uxTaskGetStackHighWaterMark(taskHandle));
+			if (taskHandle != nullptr)
+			{
+				SerialPort.write(", mem: ");
+				SerialPort.print(uxTaskGetStackHighWaterMark(taskHandle));
+			}
 			SerialPort.write(", heap: ");
 			SerialPort.print(ESP.getFreeHeap());
 			#if defined(NEOPIXEL_RGBW)
 				calibrationConfig.printCalibration();
 			#endif
-
 		}
 
 		/**

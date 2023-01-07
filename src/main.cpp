@@ -86,11 +86,31 @@
 #pragma message(VAR_NAME_VALUE2(LED_DRIVER))
 
 #if defined(SECOND_SEGMENT_START_INDEX)
+	#if defined(NEOPIXEL_RGBW) || defined(NEOPIXEL_RGB)
+		#define PARALLEL_MODE
+	#endif
+
+	#if defined(PARALLEL_MODE)
+		#pragma message("Using parallel mode for segments")
+	#endif
+
 	#if defined(ARDUINO_LOLIN_S2_MINI)
 		#ifdef NEOPIXEL_RGBW
-			#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32Rmt0Sk6812Method>
+			#ifdef PARALLEL_MODE
+				#undef LED_DRIVER
+				#define LED_DRIVER NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0X8Sk6812Method>
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0X8Sk6812Method>
+			#else			
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32Rmt0Sk6812Method>
+			#endif
 		#elif NEOPIXEL_RGB
-			#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt0Ws2812xMethod>
+			#ifdef PARALLEL_MODE
+				#undef LED_DRIVER
+				#define LED_DRIVER NeoPixelBus<NeoGrbFeature, NeoEsp32I2s0X8Ws2812Method>
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32I2s0X8Ws2812Method>
+			#else
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt0Ws2812xMethod>
+			#endif
 		#elif SPILED_APA102
 			#define LED_DRIVER2 NeoPixelBus<DotStarBgrFeature, DotStarEsp32DmaHspiMethod>
 		#elif SPILED_WS2801
@@ -98,9 +118,21 @@
 		#endif
 	#else
 		#ifdef NEOPIXEL_RGBW
-			#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0Sk6812Method>
+			#ifdef PARALLEL_MODE
+				#undef LED_DRIVER
+				#define LED_DRIVER NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s1X8Sk6812Method>
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s1X8Sk6812Method>
+			#else
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0Sk6812Method>
+			#endif
 		#elif NEOPIXEL_RGB
-			#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32I2s0Ws2812xMethod>
+			#ifdef PARALLEL_MODE
+				#undef LED_DRIVER
+				#define LED_DRIVER NeoPixelBus<NeoGrbFeature, NeoEsp32I2s1X8Ws2812Method>
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s1X8Ws2812Method>
+			#else
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32I2s0Ws2812xMethod>
+			#endif
 		#elif SPILED_APA102
 			#define LED_DRIVER2 NeoPixelBus<DotStarBgrFeature, DotStarEsp32DmaVspiMethod>
 		#elif SPILED_WS2801
@@ -140,55 +172,72 @@ void processTask(void * parameters)
 
 void setup()
 {
+	bool multicore = true;
+	
 	// Init serial port
 	Serial.setRxBufferSize(MAX_BUFFER);
 	Serial.setTimeout(50);
 	Serial.begin(SERIALCOM_SPEED);
 	while (!Serial) continue;
 
-	// Display config
-	Serial.println(HELLO_MESSAGE);
-	#if defined(SECOND_SEGMENT_START_INDEX)
-		SerialPort.write("SECOND_SEGMENT_START_INDEX = ");
-		SerialPort.println(SECOND_SEGMENT_START_INDEX);	
-	#endif
-
-	// Colorspace/Led type info
 	#if defined(NEOPIXEL_RGBW) || defined(NEOPIXEL_RGB)
 		#ifdef NEOPIXEL_RGBW
 			#ifdef COLD_WHITE
 				calibrationConfig.setParamsAndPrepareCalibration(0xFF, 0xA0, 0xA0, 0xA0);
-				Serial.println("NeoPixelBus SK6812 cold GRBW.");
 			#else
 				calibrationConfig.setParamsAndPrepareCalibration(0xFF, 0xB0, 0xB0, 0x70);
-				Serial.println("NeoPixelBus SK6812 neutral GRBW.");
 			#endif
-			calibrationConfig.printCalibration();
-		#else
-			Serial.println("NeoPixelBus ws281x type (GRB).");
 		#endif
-	#elif defined(SPILED_APA102)
-		Serial.println("SPI APA102 compatible type (BGR).");
-	#elif defined(SPILED_WS2801)
-		Serial.println("SPI WS2801 (RBG).");
 	#endif
 
-	Serial.flush();
-	delay(50);
+	#if !defined(CONFIG_IDF_TARGET_ESP32S2)
+		// Display config
+		Serial.println(HELLO_MESSAGE);
+		#if defined(SECOND_SEGMENT_START_INDEX)
+			SerialPort.write("SECOND_SEGMENT_START_INDEX = ");
+			SerialPort.println(SECOND_SEGMENT_START_INDEX);	
+		#endif
 
-	// create new task for handling received serial data on core 0
-	xTaskCreatePinnedToCore(
-		processTask,
-		"processTask",
-		4096,
-		NULL,        
-		5,           
-		&base.processTaskHandle,      
-		0);
+		// Colorspace/Led type info
+		#if defined(NEOPIXEL_RGBW) || defined(NEOPIXEL_RGB)
+			#ifdef NEOPIXEL_RGBW
+				#ifdef COLD_WHITE
+					Serial.println("NeoPixelBus SK6812 cold GRBW.");
+				#else
+					Serial.println("NeoPixelBus SK6812 neutral GRBW.");
+				#endif
+				calibrationConfig.printCalibration();
+			#else
+				Serial.println("NeoPixelBus ws281x type (GRB).");
+			#endif
+		#elif defined(SPILED_APA102)
+			Serial.println("SPI APA102 compatible type (BGR).");
+		#elif defined(SPILED_WS2801)
+			Serial.println("SPI WS2801 (RBG).");
+		#endif
+
+		//Serial.flush();
+		delay(50);
+	#endif
+
+	if (multicore)
+	{
+		// create new task for handling received serial data on core 0
+		xTaskCreatePinnedToCore(
+			processTask,
+			"processTask",
+			4096,
+			NULL,        
+			5,           
+			&base.processTaskHandle,      
+			0);
+	}
 }
 
 void loop()
 {
 	serialTaskHandler();
+	if (base.processTaskHandle == NULL)
+		processData();
 }
 

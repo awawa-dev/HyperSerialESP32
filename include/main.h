@@ -71,15 +71,17 @@ void processData()
 	unsigned long currentTime = millis();
 	unsigned long deltaTime = currentTime - statistics.getStartTime();
 
-	if (base.queueCurrent != base.queueEnd && deltaTime >= 1000)
+	if (base.queueCurrent != base.queueEnd && deltaTime >= 990 && deltaTime <= 1090 && statistics.getGoodFrames()>3)
 	{
 		statistics.update(currentTime);
 	}
 	else if (deltaTime >= 3000)
 	{
 		frameState.setState(AwaProtocol::HEADER_A);
-		statistics.print(currentTime, base.processTaskHandle);
-		vTaskDelay(50);
+		#if !defined(CONFIG_IDF_TARGET_ESP32S2)
+			statistics.print(currentTime, base.processTaskHandle);
+			vTaskDelay(50);
+		#endif		
 	}	
 
 	// render waiting frame if available
@@ -156,11 +158,16 @@ void processData()
 			{
 				if (input == 0x15)
 				{
-					SerialPort.println(HELLO_MESSAGE);
-					statistics.reset(deltaTime);
+					statistics.print(currentTime, base.processTaskHandle);
+					SerialPort.println(HELLO_MESSAGE);					
+					vTaskDelay(50);
+					statistics.reset(currentTime);
 				}
 				else
+				{
 					statistics.print(currentTime, base.processTaskHandle);
+					vTaskDelay(50);
+				}
 					
 				frameState.setState(AwaProtocol::HEADER_A);
 			}
