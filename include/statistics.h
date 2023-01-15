@@ -115,26 +115,18 @@ class
 		 */
 		void print(unsigned long curTime, TaskHandle_t taskHandle)
 		{
+			char output[100];
+
 			startTime = curTime;
 			goodFrames = 0;
 			totalFrames = 0;
 			showFrames = 0;
 			
-			SerialPort.write("\r\nHyperHDR frames: ");
-			SerialPort.print(finalShowFrames);
-			SerialPort.write(" (FPS), receiv.: ");
-			SerialPort.print(finalTotalFrames);						
-			SerialPort.write(", good: ");
-			SerialPort.print(finalGoodFrames);				
-			SerialPort.write(", incompl.: ");
-			SerialPort.print(finalTotalFrames - finalGoodFrames);
-			if (taskHandle != nullptr)
-			{
-				SerialPort.write(", mem: ");
-				SerialPort.print(uxTaskGetStackHighWaterMark(taskHandle));
-			}
-			SerialPort.write(", heap: ");
-			SerialPort.print(ESP.getFreeHeap());
+			snprintf(output, sizeof(output),"\r\nHyperHDR frames: %u (FPS), receiv.: %u, good: %u, incompl.: %u, mem: %i, heap: %i", 
+						finalShowFrames, finalTotalFrames,finalGoodFrames,(finalTotalFrames - finalGoodFrames),
+						(taskHandle != nullptr) ? uxTaskGetStackHighWaterMark(taskHandle) : 0, ESP.getFreeHeap());			
+			SerialPort.print(output);
+			
 			#if defined(NEOPIXEL_RGBW)
 				calibrationConfig.printCalibration();
 			#endif
