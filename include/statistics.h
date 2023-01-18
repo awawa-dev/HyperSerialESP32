@@ -147,7 +147,17 @@ class
 			goodFrames = 0;
 			totalFrames = 0;
 			showFrames = 0;
+		}		
+
+		void lightReset(unsigned long curTime)
+		{
+			startTime = curTime;
+			
+			goodFrames = 0;
+			totalFrames = 0;
+			showFrames = 0;
 		}
+
 } statistics;
 
 #endif

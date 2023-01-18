@@ -61,6 +61,14 @@ void serialTaskHandler()
 	}	
 }
 
+void updateMainStatistics(unsigned long currentTime, unsigned long deltaTime)
+{
+	if (deltaTime >= 1000 && deltaTime <= 1025 && statistics.getGoodFrames() > 3)
+		statistics.update(currentTime);
+	else if (deltaTime > 1025)
+		statistics.lightReset(currentTime);
+}
+
 /**
  * @brief process received data on core 0
  * 
@@ -71,9 +79,9 @@ void processData()
 	unsigned long currentTime = millis();
 	unsigned long deltaTime = currentTime - statistics.getStartTime();
 
-	if (base.queueCurrent != base.queueEnd && deltaTime >= 990 && deltaTime <= 1090 && statistics.getGoodFrames()>3)
+	if (base.queueCurrent != base.queueEnd)
 	{
-		statistics.update(currentTime);
+		updateMainStatistics(currentTime, deltaTime);
 	}
 	else if (deltaTime >= 3000)
 	{
@@ -272,6 +280,11 @@ void processData()
 						frameState.updateIncomingCalibration();						
 					}
 				#endif
+
+				currentTime = millis();
+				deltaTime = currentTime - statistics.getStartTime();
+				updateMainStatistics(currentTime, deltaTime);
+				
 			}
 
 			frameState.setState(AwaProtocol::HEADER_A);
