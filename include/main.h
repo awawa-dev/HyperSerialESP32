@@ -28,7 +28,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define MAX_BUFFER 6000
+#define MAX_BUFFER (2713 * 2 + 1)
 #define HELLO_MESSAGE "\r\nWelcome!\r\nAwa driver 8."
 
 #include "calibration.h"
@@ -40,12 +40,15 @@
  * @brief separete thread on core 1 for handling serial communication using cyclic buffer
  * 
  */
-void serialTaskHandler()
+
+bool serialTaskHandler()
 {		
-	uint16_t incomingSize = min(SerialPort.available(), MAX_BUFFER);
+	uint16_t incomingSize = min(SerialPort.available(), MAX_BUFFER - 1);
 
 	if (incomingSize > 0)
 	{
+		int queueEnd = base.queueEnd;
+
 		if (base.queueEnd + incomingSize < MAX_BUFFER)
 		{
 			SerialPort.read(&(base.buffer[base.queueEnd]), incomingSize);
@@ -58,15 +61,24 @@ void serialTaskHandler()
 			SerialPort.read(&(base.buffer[0]), incomingSize - left);
 			base.queueEnd = incomingSize - left;
 		}
-	}	
+
+		int currentPointer = base.queueCurrent;
+		
+		if ((currentPointer > queueEnd && queueEnd + incomingSize >= currentPointer) ||
+			(currentPointer < queueEnd && (queueEnd + incomingSize) >= MAX_BUFFER && ((queueEnd + incomingSize) % MAX_BUFFER) >= currentPointer ))
+
+			frameState.setState(AwaProtocol::HEADER_A);		
+	}
+	
+	return (incomingSize > 0);
 }
 
-void updateMainStatistics(unsigned long currentTime, unsigned long deltaTime)
+void updateMainStatistics(unsigned long currentTime, unsigned long deltaTime, bool hasData)
 {
-	if (deltaTime >= 1000 && deltaTime <= 1025 && statistics.getGoodFrames() > 3)
+	if (hasData && deltaTime >= 1000 && deltaTime <= 1025 && statistics.getGoodFrames() > 3)
 		statistics.update(currentTime);
 	else if (deltaTime > 1025)
-		statistics.lightReset(currentTime);
+		statistics.lightReset(currentTime, hasData);
 }
 
 /**
@@ -79,21 +91,19 @@ void processData()
 	unsigned long currentTime = millis();
 	unsigned long deltaTime = currentTime - statistics.getStartTime();
 
-	if (base.queueCurrent != base.queueEnd)
-	{
-		updateMainStatistics(currentTime, deltaTime);
-	}
-	else if (deltaTime >= 3000)
+	updateMainStatistics(currentTime, deltaTime, base.queueCurrent != base.queueEnd);
+
+	if (base.queueCurrent == base.queueEnd && (statistics.getStartTime() + 5000 < millis()))
 	{
 		frameState.setState(AwaProtocol::HEADER_A);
 		#if !defined(CONFIG_IDF_TARGET_ESP32S2)
-			statistics.print(currentTime, base.processTaskHandle);
+			statistics.print(currentTime, base.processDataHandle, base.processSerialHandle);
 			vTaskDelay(50);
 		#endif		
 	}	
 
 	// render waiting frame if available
-	if (base.hasLateFrameToRender() && frameState.getState() == AwaProtocol::HEADER_A)
+	if (base.hasLateFrameToRender())
 		base.renderLeds(false);
 
 	// process received data
@@ -166,14 +176,14 @@ void processData()
 			{
 				if (input == 0x15)
 				{
-					statistics.print(currentTime, base.processTaskHandle);
+					statistics.print(currentTime, base.processDataHandle, base.processSerialHandle);
 					SerialPort.println(HELLO_MESSAGE);					
 					vTaskDelay(50);
 					statistics.reset(currentTime);
 				}
 				else
 				{
-					statistics.print(currentTime, base.processTaskHandle);
+					statistics.print(currentTime, base.processDataHandle, base.processSerialHandle);
 					vTaskDelay(50);
 				}
 					
@@ -283,7 +293,7 @@ void processData()
 
 				currentTime = millis();
 				deltaTime = currentTime - statistics.getStartTime();
-				updateMainStatistics(currentTime, deltaTime);
+				updateMainStatistics(currentTime, deltaTime, true);
 				
 			}
 

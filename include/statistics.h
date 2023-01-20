@@ -113,18 +113,20 @@ class
 		 * @param curTime 
 		 * @param taskHandle 
 		 */
-		void print(unsigned long curTime, TaskHandle_t taskHandle)
+		void print(unsigned long curTime, TaskHandle_t taskHandle1, TaskHandle_t taskHandle2)
 		{
-			char output[100];
+			char output[128];
 
 			startTime = curTime;
 			goodFrames = 0;
 			totalFrames = 0;
 			showFrames = 0;
 			
-			snprintf(output, sizeof(output),"\r\nHyperHDR frames: %u (FPS), receiv.: %u, good: %u, incompl.: %u, mem: %i, heap: %i", 
+			snprintf(output, sizeof(output),"\r\nHyperHDR frames: %u (FPS), receiv.: %u, good: %u, incompl.: %u, mem1: %i, mem2: %i, heap: %i", 
 						finalShowFrames, finalTotalFrames,finalGoodFrames,(finalTotalFrames - finalGoodFrames),
-						(taskHandle != nullptr) ? uxTaskGetStackHighWaterMark(taskHandle) : 0, ESP.getFreeHeap());			
+						(taskHandle1 != nullptr) ? uxTaskGetStackHighWaterMark(taskHandle1) : 0, 
+						(taskHandle2 != nullptr) ? uxTaskGetStackHighWaterMark(taskHandle2) : 0,
+						ESP.getFreeHeap());			
 			SerialPort.print(output);
 			
 			#if defined(NEOPIXEL_RGBW)
@@ -149,9 +151,10 @@ class
 			showFrames = 0;
 		}		
 
-		void lightReset(unsigned long curTime)
+		void lightReset(unsigned long curTime, bool hasData)
 		{
-			startTime = curTime;
+			if (hasData)
+				startTime = curTime;
 			
 			goodFrames = 0;
 			totalFrames = 0;

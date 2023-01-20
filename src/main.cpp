@@ -161,12 +161,22 @@
  * 
  * @param parameters 
  */
-void processTask(void * parameters)
+void processDataTask(void * parameters)
 {
 	for(;;)
 	{
+		xSemaphoreTake(base.i2sXSemaphore, portMAX_DELAY);
 		processData();
-		delay(1);
+	}
+}
+
+void processSerialTask(void * parameters)
+{
+	for(;;)
+	{		
+		if (serialTaskHandler() || base.queueCurrent != base.queueEnd)
+			xSemaphoreGive(base.i2sXSemaphore);
+		yield();
 	}
 }
 
@@ -175,7 +185,7 @@ void setup()
 	bool multicore = true;
 	
 	// Init serial port
-	Serial.setRxBufferSize(MAX_BUFFER);
+	Serial.setRxBufferSize(MAX_BUFFER - 1);
 	Serial.setTimeout(50);
 	Serial.begin(SERIALCOM_SPEED);
 	while (!Serial) continue;
@@ -222,22 +232,36 @@ void setup()
 
 	if (multicore)
 	{
+		// create a semaphore to synchronize threads
+		base.i2sXSemaphore = xSemaphoreCreateBinary();
+
 		// create new task for handling received serial data on core 0
 		xTaskCreatePinnedToCore(
-			processTask,
-			"processTask",
+			processDataTask,
+			"processDataTask",
 			4096,
 			NULL,        
 			5,           
-			&base.processTaskHandle,      
+			&base.processDataHandle,      
 			0);
+		// serial handler on core 1
+		xTaskCreatePinnedToCore(
+			processSerialTask,
+			"processSerialTask",
+			4096,
+			NULL,        
+			2,           
+			&base.processSerialHandle,      
+			1);
 	}
 }
 
 void loop()
 {
-	serialTaskHandler();
-	if (base.processTaskHandle == NULL)
+	if (base.processDataHandle == nullptr && base.processSerialHandle == nullptr)
+	{
+		serialTaskHandler();	
 		processData();
+	}
 }
 
