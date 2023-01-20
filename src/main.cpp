@@ -234,6 +234,7 @@ void setup()
 	{
 		// create a semaphore to synchronize threads
 		base.i2sXSemaphore = xSemaphoreCreateBinary();
+		
 
 		// create new task for handling received serial data on core 0
 		xTaskCreatePinnedToCore(

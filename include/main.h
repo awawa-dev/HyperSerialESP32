@@ -28,7 +28,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define MAX_BUFFER (2713 * 2 + 1)
+#define MAX_BUFFER (6000 + 1)
 #define HELLO_MESSAGE "\r\nWelcome!\r\nAwa driver 8."
 
 #include "calibration.h"
@@ -93,13 +93,9 @@ void processData()
 
 	updateMainStatistics(currentTime, deltaTime, base.queueCurrent != base.queueEnd);
 
-	if (base.queueCurrent == base.queueEnd && (statistics.getStartTime() + 5000 < millis()))
+	if (statistics.getStartTime() + 5000 < millis())
 	{
 		frameState.setState(AwaProtocol::HEADER_A);
-		#if !defined(CONFIG_IDF_TARGET_ESP32S2)
-			statistics.print(currentTime, base.processDataHandle, base.processSerialHandle);
-			vTaskDelay(50);
-		#endif		
 	}	
 
 	// render waiting frame if available
@@ -112,7 +108,10 @@ void processData()
 		byte input = base.buffer[base.queueCurrent++];
 
 		if (base.queueCurrent >= MAX_BUFFER)
-            base.queueCurrent = 0;
+		{
+			base.queueCurrent = 0;
+			yield();
+		}
 
 		switch (frameState.getState())
 		{
@@ -294,7 +293,8 @@ void processData()
 				currentTime = millis();
 				deltaTime = currentTime - statistics.getStartTime();
 				updateMainStatistics(currentTime, deltaTime, true);
-				
+
+				yield();				
 			}
 
 			frameState.setState(AwaProtocol::HEADER_A);
