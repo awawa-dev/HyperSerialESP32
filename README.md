@@ -104,13 +104,13 @@ ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin min
 
 ## Parallel multi-segments can double your large sk6812/ws2812b setup refresh rate for free. All you need is to properly project & construct the LED strip and use HyperSerialESP32 v9. Parallel communication provides perfect synchronization between Neopixel segments.
 
-| LED strip / Device                                                                      | ESP32<br>MH-ET LIVE mini |  ESP32-S2<br>Lolin mini  |
-|-----------------------------------------------------------------------------------------|--------------------------|--------------------------|
-| 300LEDs sk6812<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=150 |             100          |             100          |
-| 600LEDs sk6812<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=300 |              83          |              82          |
-| 900LEDs sk6812<br>Refresh rate/continues output=**60Hz** <br>SECOND_SEGMENT_START_INDEX=450 |            54-56         |           55-56          |
+| LED strip / Device                                                                      | ESP32<br>MH-ET LIVE mini |  ESP32-S2<br>  Lolin mini    |
+|-----------------------------------------------------------------------------------------|--------------------------|------------------------------|
+| 300LEDs sk6812<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=150 |             100          |               100            |
+| 600LEDs sk6812<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=300 |              83          |                82            |
+| 900LEDs sk6812<br>Refresh rate/continues output=**60Hz** <br>SECOND_SEGMENT_START_INDEX=450 |            54-56         |             55-56            |
 
-## Comparing v6.1 and v8 version (single segment) refresh rate using MH-ET LIVE mini
+## Comparing v6.1 and v9 version (single segment) refresh rate using MH-ET LIVE mini
 
 | LED strip / Device                             | ESP32<br>MH-ET LIVE mini<br>HyperSerialESP32 v6.1 | ESP32<br>MH-ET LIVE mini<br>HyperSerialESP32 v9 |
 |------------------------------------------------|---------------------------------------------------|-------------------------------------------------|

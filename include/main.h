@@ -28,7 +28,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define MAX_BUFFER (6000 + 1)
+#define MAX_BUFFER (3013 * 3 + 1)
 #define HELLO_MESSAGE "\r\nWelcome!\r\nAwa driver 8."
 
 #include "calibration.h"
