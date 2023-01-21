@@ -104,7 +104,7 @@ ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin min
 
 ## Parallel multi-segments can double your large sk6812/ws2812b setup refresh rate for free. All you need is to properly project & construct the LED strip and use HyperSerialESP32 v9. Parallel communication provides perfect synchronization between Neopixel segments.
 
-| LED strip / Device                                                                      | ESP32<br>MH-ET LIVE mini |  ESP32-S2<br>  Lolin mini    |
+| LED strip / Device                                                                      | ESP32<br>MH-ET LIVE mini @ 4Mb speed |  ESP32-S2<br>  Lolin mini @ 5Mb speed   |
 |-----------------------------------------------------------------------------------------|--------------------------|------------------------------|
 | 300LEDs sk6812<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=150 |             100          |               100            |
 | 600LEDs sk6812<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=300 |              83          |                82            |
