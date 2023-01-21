@@ -101,7 +101,7 @@
 				#define LED_DRIVER NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0X8Sk6812Method>
 				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0X8Sk6812Method>
 			#else			
-				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32Rmt0Sk6812Method>
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0Sk6812Method>
 			#endif
 		#elif NEOPIXEL_RGB
 			#ifdef PARALLEL_MODE
@@ -109,7 +109,7 @@
 				#define LED_DRIVER NeoPixelBus<NeoGrbFeature, NeoEsp32I2s0X8Ws2812Method>
 				#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32I2s0X8Ws2812Method>
 			#else
-				#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt0Ws2812xMethod>
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32I2s0Ws2812xMethod>
 			#endif
 		#elif SPILED_APA102
 			#define LED_DRIVER2 NeoPixelBus<DotStarBgrFeature, DotStarEsp32DmaHspiMethod>
