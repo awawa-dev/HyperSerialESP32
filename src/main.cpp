@@ -212,9 +212,9 @@ void setup()
 		#if defined(NEOPIXEL_RGBW) || defined(NEOPIXEL_RGB)
 			#ifdef NEOPIXEL_RGBW
 				#ifdef COLD_WHITE
-					Serial.println("NeoPixelBus SK6812 cold GRBW.");
+					Serial.println("NeoPixelBus SK6812 cold GRBW. ");
 				#else
-					Serial.println("NeoPixelBus SK6812 neutral GRBW.");
+					Serial.println("NeoPixelBus SK6812 neutral GRBW. ");
 				#endif
 				calibrationConfig.printCalibration();
 			#else

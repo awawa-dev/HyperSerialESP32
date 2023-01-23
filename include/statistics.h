@@ -122,7 +122,7 @@ class
 			totalFrames = 0;
 			showFrames = 0;
 			
-			snprintf(output, sizeof(output),"\r\nHyperHDR frames: %u (FPS), receiv.: %u, good: %u, incompl.: %u, mem1: %i, mem2: %i, heap: %i", 
+			snprintf(output, sizeof(output), "HyperHDR frames: %u (FPS), receiv.: %u, good: %u, incompl.: %u, mem1: %i, mem2: %i, heap: %i\r\n", 
 						finalShowFrames, finalTotalFrames,finalGoodFrames,(finalTotalFrames - finalGoodFrames),
 						(taskHandle1 != nullptr) ? uxTaskGetStackHighWaterMark(taskHandle1) : 0, 
 						(taskHandle2 != nullptr) ? uxTaskGetStackHighWaterMark(taskHandle2) : 0,

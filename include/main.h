@@ -173,20 +173,15 @@ void processData()
 			}
 			else if (frameState.getCount() ==  0x2aa2 && (input == 0x15 || input == 0x35))
 			{
-				if (input == 0x15)
-				{
-					statistics.print(currentTime, base.processDataHandle, base.processSerialHandle);
-					SerialPort.println(HELLO_MESSAGE);					
-					vTaskDelay(50);
-					statistics.reset(currentTime);
-				}
-				else
-				{
-					statistics.print(currentTime, base.processDataHandle, base.processSerialHandle);
-					vTaskDelay(50);
-				}
-					
-				frameState.setState(AwaProtocol::HEADER_A);
+				statistics.print(currentTime, base.processDataHandle, base.processSerialHandle);
+
+				if (input == 0x15)				
+					SerialPort.println(HELLO_MESSAGE);									
+				delay(10);
+
+				currentTime = millis();
+				statistics.reset(currentTime);				
+				frameState.setState(AwaProtocol::HEADER_A);				
 			}
 			else							
 				frameState.setState(AwaProtocol::HEADER_A);			
