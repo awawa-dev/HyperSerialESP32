@@ -83,7 +83,6 @@
 #ifdef CLOCK_PIN
 	#pragma message(VAR_NAME_VALUE(CLOCK_PIN))
 #endif
-#pragma message(VAR_NAME_VALUE2(LED_DRIVER))
 
 #if defined(SECOND_SEGMENT_START_INDEX)
 	#if defined(NEOPIXEL_RGBW) || defined(NEOPIXEL_RGB)
@@ -139,13 +138,16 @@
 			#define LED_DRIVER2 NeoPixelBus<NeoRbgFeature, NeoWs2801Spi2MhzMethod>
 		#endif
 	#endif
+	#pragma message(VAR_NAME_VALUE2(LED_DRIVER))
 	#pragma message(VAR_NAME_VALUE(SECOND_SEGMENT_START_INDEX))
 	#pragma message(VAR_NAME_VALUE(SECOND_SEGMENT_DATA_PIN))
 	#ifdef SECOND_SEGMENT_CLOCK_PIN
 		#pragma message(VAR_NAME_VALUE(SECOND_SEGMENT_CLOCK_PIN))
 	#endif
 	#pragma message(VAR_NAME_VALUE2(LED_DRIVER2))
-#else 
+#else
+	#pragma message(VAR_NAME_VALUE2(LED_DRIVER))
+	
 	class LED_DRIVER2 {
 		public:
 		bool CanShow() {return true;}
@@ -240,7 +242,7 @@ void setup()
 		xTaskCreatePinnedToCore(
 			processDataTask,
 			"processDataTask",
-			4096,
+			5096,
 			NULL,        
 			5,           
 			&base.processDataHandle,      
