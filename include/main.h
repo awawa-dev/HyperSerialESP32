@@ -47,8 +47,6 @@ bool serialTaskHandler()
 
 	if (incomingSize > 0)
 	{
-		int queueEnd = base.queueEnd;
-
 		if (base.queueEnd + incomingSize < MAX_BUFFER)
 		{
 			SerialPort.read(&(base.buffer[base.queueEnd]), incomingSize);
@@ -60,14 +58,7 @@ bool serialTaskHandler()
 			SerialPort.read(&(base.buffer[base.queueEnd]), left);
 			SerialPort.read(&(base.buffer[0]), incomingSize - left);
 			base.queueEnd = incomingSize - left;
-		}
-
-		int currentPointer = base.queueCurrent;
-		
-		if ((currentPointer > queueEnd && queueEnd + incomingSize >= currentPointer) ||
-			(currentPointer < queueEnd && (queueEnd + incomingSize) >= MAX_BUFFER && ((queueEnd + incomingSize) % MAX_BUFFER) >= currentPointer ))
-
-			frameState.setState(AwaProtocol::HEADER_A);		
+		}	
 	}
 	
 	return (incomingSize > 0);

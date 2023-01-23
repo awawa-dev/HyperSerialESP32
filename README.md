@@ -18,7 +18,7 @@ RGB to RGBW conversion is calibrated for the neutral white channel BTF SK6812 bu
 
 # Example of supported boards
 
-**ESP32 MH-ET Live (CH9102x/CP2104) and ESP32-S2 Lolin mini (CDC)**  
+**ESP32 MH-ET Live (CP2104 or CH9102x: for Windows you may need CH343CDC driver from wch site) and ESP32-S2 Lolin mini (CDC)**  
 <p align="center">
 <img src="https://user-images.githubusercontent.com/69086569/207587620-1c4c53c8-426c-486e-a6d9-d429fd1b050d.png" /><img src="https://user-images.githubusercontent.com/69086569/207587635-b7816329-0e29-47ee-a75a-bc6c41cdc51f.png" />
 </p>
