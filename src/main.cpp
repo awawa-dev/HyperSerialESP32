@@ -253,7 +253,7 @@ void setup()
 			"processSerialTask",
 			4096,
 			NULL,        
-			3,           
+			2,           
 			&base.processSerialHandle,      
 			1);
 	}
