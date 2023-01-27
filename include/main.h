@@ -29,7 +29,7 @@
 #define MAIN_H
 
 #define MAX_BUFFER (3013 * 3 + 1)
-#define HELLO_MESSAGE "\r\nWelcome!\r\nAwa driver 8."
+#define HELLO_MESSAGE "\r\nWelcome!\r\nAwa driver 9."
 
 #include "calibration.h"
 #include "statistics.h"
