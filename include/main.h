@@ -28,8 +28,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define MAX_BUFFER 6000
-#define HELLO_MESSAGE "\r\nWelcome!\r\nAwa driver 8."
+#define MAX_BUFFER (3013 * 3 + 1)
+#define HELLO_MESSAGE "\r\nWelcome!\r\nAwa driver 9."
 
 #include "calibration.h"
 #include "statistics.h"
@@ -40,9 +40,10 @@
  * @brief separete thread on core 1 for handling serial communication using cyclic buffer
  * 
  */
-void serialTaskHandler()
+
+bool serialTaskHandler()
 {		
-	uint16_t incomingSize = min(SerialPort.available(), MAX_BUFFER);
+	uint16_t incomingSize = min(SerialPort.available(), MAX_BUFFER - 1);
 
 	if (incomingSize > 0)
 	{
@@ -57,8 +58,18 @@ void serialTaskHandler()
 			SerialPort.read(&(base.buffer[base.queueEnd]), left);
 			SerialPort.read(&(base.buffer[0]), incomingSize - left);
 			base.queueEnd = incomingSize - left;
-		}
-	}	
+		}	
+	}
+	
+	return (incomingSize > 0);
+}
+
+void updateMainStatistics(unsigned long currentTime, unsigned long deltaTime, bool hasData)
+{
+	if (hasData && deltaTime >= 1000 && deltaTime <= 1025 && statistics.getGoodFrames() > 3)
+		statistics.update(currentTime);
+	else if (deltaTime > 1025)
+		statistics.lightReset(currentTime, hasData);
 }
 
 /**
@@ -71,19 +82,15 @@ void processData()
 	unsigned long currentTime = millis();
 	unsigned long deltaTime = currentTime - statistics.getStartTime();
 
-	if (base.queueCurrent != base.queueEnd && deltaTime >= 1000)
-	{
-		statistics.update(currentTime);
-	}
-	else if (deltaTime >= 3000)
+	updateMainStatistics(currentTime, deltaTime, base.queueCurrent != base.queueEnd);
+
+	if (statistics.getStartTime() + 5000 < millis())
 	{
 		frameState.setState(AwaProtocol::HEADER_A);
-		statistics.print(currentTime, base.processTaskHandle);
-		vTaskDelay(50);
 	}	
 
 	// render waiting frame if available
-	if (base.hasLateFrameToRender() && frameState.getState() == AwaProtocol::HEADER_A)
+	if (base.hasLateFrameToRender())
 		base.renderLeds(false);
 
 	// process received data
@@ -92,7 +99,10 @@ void processData()
 		byte input = base.buffer[base.queueCurrent++];
 
 		if (base.queueCurrent >= MAX_BUFFER)
-            base.queueCurrent = 0;
+		{
+			base.queueCurrent = 0;
+			yield();
+		}
 
 		switch (frameState.getState())
 		{
@@ -154,15 +164,15 @@ void processData()
 			}
 			else if (frameState.getCount() ==  0x2aa2 && (input == 0x15 || input == 0x35))
 			{
-				if (input == 0x15)
-				{
-					SerialPort.println(HELLO_MESSAGE);
-					statistics.reset(deltaTime);
-				}
-				else
-					statistics.print(currentTime, base.processTaskHandle);
-					
-				frameState.setState(AwaProtocol::HEADER_A);
+				statistics.print(currentTime, base.processDataHandle, base.processSerialHandle);
+
+				if (input == 0x15)				
+					SerialPort.println(HELLO_MESSAGE);									
+				delay(10);
+
+				currentTime = millis();
+				statistics.reset(currentTime);				
+				frameState.setState(AwaProtocol::HEADER_A);				
 			}
 			else							
 				frameState.setState(AwaProtocol::HEADER_A);			
@@ -265,6 +275,12 @@ void processData()
 						frameState.updateIncomingCalibration();						
 					}
 				#endif
+
+				currentTime = millis();
+				deltaTime = currentTime - statistics.getStartTime();
+				updateMainStatistics(currentTime, deltaTime, true);
+
+				yield();				
 			}
 
 			frameState.setState(AwaProtocol::HEADER_A);

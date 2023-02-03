@@ -58,7 +58,7 @@ enum class AwaProtocol
  */
 class
 {
-	AwaProtocol state = AwaProtocol::HEADER_A;
+	volatile AwaProtocol state = AwaProtocol::HEADER_A;
 	bool protocolVersion2 = false;
 	uint8_t CRC = 0;
 	uint16_t count = 0;
@@ -85,6 +85,7 @@ class
 			fletcher2 = 0;
 			fletcherExt = 0;
 			position = 0;
+			base.dropLateFrame();
 		}
 
 		/**

@@ -18,7 +18,7 @@ RGB to RGBW conversion is calibrated for the neutral white channel BTF SK6812 bu
 
 # Example of supported boards
 
-**ESP32 MH-ET Live (CH9102x/CP2104) and ESP32-S2 Lolin mini (CDC)**  
+**ESP32 MH-ET Live (CP2104 or CH9102x: for Windows you may need CH343CDC driver from *wch* website) and ESP32-S2 Lolin mini (CDC)**  
 <p align="center">
 <img src="https://user-images.githubusercontent.com/69086569/207587620-1c4c53c8-426c-486e-a6d9-d429fd1b050d.png" /><img src="https://user-images.githubusercontent.com/69086569/207587635-b7816329-0e29-47ee-a75a-bc6c41cdc51f.png" />
 </p>
@@ -60,7 +60,7 @@ Enabling `White channel calibration` is optional, if you want to fine tune the w
 # Compiling
   
 Currently we use PlatformIO to compile the project. Install [Visual Studio Code](https://code.visualstudio.com/) and add [PlatformIO plugin](https://platformio.org/).
-This environment will take care of everything and compile the firmware for you. Low-level LED strip support is provided by the https://github.com/Makuna/NeoPixelBus library.
+This environment will take care of everything and compile the firmware for you. Low-level LED strip support is provided by my highly optimizated (pre-fill I2S DMA modes, turbo I2S parallel mode for up to 2 segments etc) version of Neopixelbus library: [link](https://github.com/awawa-dev/NeoPixelBus).
 
 But there is also an alternative and an easier way. Just fork the project and enable its Github Action. Use the online editor to make changes to the ```platformio.ini``` file, for example change default pin-outs/speed or enable multi-segments support, and save it. Github Action will compile new firmware automatically in the Artifacts archive. It has never been so easy!
 
@@ -100,23 +100,23 @@ build_flags = -DNEOPIXEL_RGB -DDATA_PIN=2 ${env.build_flags} -DSECOND_SEGMENT_ST
 
 # Some benchmark results
 
-ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin mini is capable of 5Mb. But to give equal chances all models were tested using the default speed of 2Mb.
+ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin mini is capable of 5Mb. But to give equal chances for a single-segment mode all models were tested using the default speed of 2Mb which should saturate Neopixel data line. Parallel multi-segment mode uses the highest option available because communication performance is critical here.
 
-## Multi-segments can double your large sk6812/ws2812b setup refresh rate for free. All you need is to properly project & construct the LED strip and use HyperSerialESP32 v8.
+## Parallel multi-segments can double your large sk6812/ws2812b setup refresh rate for free. All you need is to properly project & construct the LED strip and use HyperSerialESP32 v9. Parallel communication provides perfect synchronization between Neopixel segments.
 
-| LED strip / Device                                                               | ESP32<br>MH-ET LIVE mini |
-|----------------------------------------------------------------------------------|--------------------------|
-| 300LEDs<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=150 |            93-97         |
-| 600LEDs<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=300 |            78-79         |
-| 900LEDs<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=450 |            55-56         |
+| LED strip / Device                                                                      | ESP32<br>MH-ET LIVE mini @ 4Mb speed |  ESP32-S2<br>  Lolin mini @ 5Mb speed   |
+|-----------------------------------------------------------------------------------------|--------------------------|------------------------------|
+| 300LEDs sk6812<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=150 |             100          |               100            |
+| 600LEDs sk6812<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=300 |              83          |                82            |
+| 900LEDs sk6812<br>Refresh rate/continues output=**60Hz** <br>SECOND_SEGMENT_START_INDEX=450 |            54-56         |             55-56            |
 
-## Comparing v6.1 and v8 version (single segment) refresh rate using MH-ET LIVE mini
+## Comparing v6.1 and v9 version (single segment) refresh rate using MH-ET LIVE mini
 
-| LED strip / Device                             | ESP32<br>MH-ET LIVE mini<br>HyperSerialESP32 v6.1 | ESP32<br>MH-ET LIVE mini<br>HyperSerialESP32 v8 |
+| LED strip / Device                             | ESP32<br>MH-ET LIVE mini<br>HyperSerialESP32 v6.1 | ESP32<br>MH-ET LIVE mini<br>HyperSerialESP32 v9 |
 |------------------------------------------------|---------------------------------------------------|-------------------------------------------------|
-| 300LEDs<br>Refresh rate/continues output=100Hz |                       81-83                       |                      80-83                      |
+| 300LEDs<br>Refresh rate/continues output=100Hz |                       81-83                       |                        83                       |
 | 600LEDs<br>Refresh rate/continues output=60Hz  |                       39-40                       |                      41-42                      |
-| 900LEDs<br>Refresh rate/continues output=40Hz  |                       21-26                       |                      26-28                      |
+| 900LEDs<br>Refresh rate/continues output=40Hz  |                       21-26                       |                       28                        |
 
 ## Comparing v6.1 and v8 version (single segment) refresh rate using generic ESP32 with CH340C
 
@@ -134,8 +134,3 @@ ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin min
 | 600LEDs<br>Refresh rate/continues output=60Hz  |                     42                     |
 | 900LEDs<br>Refresh rate/continues output=40Hz  |                    27-28                   |
   
-# Disclaimer
-  
-You use it on your own risk.  
-Don't touch these firmwares if you don't know how to put the device in the programming mode if something goes wrong.  
-As per the MIT license, I assume no liability for any damage to you or any other person or equipment.  

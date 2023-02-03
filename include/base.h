@@ -28,6 +28,8 @@
 #ifndef BASE_H
 #define BASE_H
 
+#include "freertos/semphr.h"
+
 #if defined(SECOND_SEGMENT_START_INDEX) 
 	#if !defined(SECOND_SEGMENT_DATA_PIN)
 		#error "Please define SECOND_SEGMENT_DATA_PIN for second segment"
@@ -49,13 +51,16 @@ class Base
 
 	public:
 		// static data buffer for the loop
-		uint8_t buffer[MAX_BUFFER];
+		uint8_t buffer[MAX_BUFFER + 1] = {0};
 		// handle to tasks
-		TaskHandle_t processTaskHandle;
+		TaskHandle_t processDataHandle = nullptr;
+		TaskHandle_t processSerialHandle = nullptr;
+		// semaphore to synchronize them
+		xSemaphoreHandle i2sXSemaphore;
 		// current queue position
-		uint16_t queueCurrent = 0;
+		volatile int queueCurrent = 0;
 		// queue end position
-		volatile uint16_t queueEnd = 0;
+		volatile int queueEnd = 0;
 
 		inline int getLedsNumber()
 		{
@@ -127,6 +132,11 @@ class Base
 		{			
 			return readyToRender;
 		}
+
+		inline void dropLateFrame()
+		{			
+			readyToRender = false;
+		}		
 
 		inline void renderLeds(bool newFrame)
 		{

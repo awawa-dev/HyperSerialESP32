@@ -119,15 +119,10 @@ class CalibrationConfig
 		 */
 		void printCalibration()
 		{
-			#ifdef SerialPort			
-				SerialPort.write("\r\nRGBW => Gain: ");
-				SerialPort.print(gain);
-				SerialPort.write("/255, red: ");
-				SerialPort.print(red);
-				SerialPort.write(" , green: ");
-				SerialPort.print(green);
-				SerialPort.write(" , blue: ");
-				SerialPort.print(blue);
+			#ifdef SerialPort
+				char output[128];	
+				snprintf(output, sizeof(output),"RGBW => Gain: %i/255, red: %i, green: %i, blue: %i\r\n", gain, red, green, blue);
+				SerialPort.print(output);
 			#endif
 		}
 } calibrationConfig;
