@@ -128,9 +128,9 @@ ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin min
 
 ## ESP32-S2 lolin mini performance
 
-| LED strip / Device                             | ESP32-S2 lolin mini<br>HyperSerialESP32 v8 |
-|------------------------------------------------|--------------------------------------------|
-| 300LEDs<br>Refresh rate/continues output=100Hz |                    80-84                   |
-| 600LEDs<br>Refresh rate/continues output=60Hz  |                     42                     |
-| 900LEDs<br>Refresh rate/continues output=40Hz  |                    27-28                   |
+| LED strip / Device                             | ESP32-S2 lolin mini<br>HyperSerialESP32 v9 |
+|------------------------------------------------|---------------------|
+| 300LEDs<br>Refresh rate/continues output=83Hz  |          83         |
+| 600LEDs<br>Refresh rate/continues output=42Hz  |          42         |
+| 900LEDs<br>Refresh rate/continues output=28Hz  |          28         |
   
