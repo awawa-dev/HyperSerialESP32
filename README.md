@@ -104,13 +104,6 @@ build_flags = -DNEOPIXEL_RGBW -DCOLD_WHITE -DDATA_PIN=2 ${env.build_flags} -DSEC
 build_flags = -DNEOPIXEL_RGB -DDATA_PIN=2 ${env.build_flags} -DSECOND_SEGMENT_START_INDEX=144 -DSECOND_SEGMENT_DATA_PIN=4 -DSECOND_SEGMENT_REVERSED
 ...
 ```
-Implementation example:
-- The diagram of the board for WS2812b including ESP32 and the SN74AHCT125N 74AHCT125 [level shifter](https://github.com/awawa-dev/HyperHDR/wiki/Level-Shifter).
-<details>
-  <summary>Multi-segment mode</summary>
-
-  ![HyperSPI](https://user-images.githubusercontent.com/85223482/216823785-746b940c-73ab-4b2f-a243-91dbc9d22816.png)
-</details>
 
 # Some benchmark results
 
