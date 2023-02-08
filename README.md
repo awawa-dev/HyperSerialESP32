@@ -29,11 +29,18 @@ Why the data integrity check was introduced which causes incompatibility with ot
   
 # Flashing
   
+**ESP32-S2 Lolin mini:**
+
+Requires using `esptool.py` to flash the firmware e.g.  
+
+`esptool.py write_flash 0x10000 firmware_esp32_s2_mini_SK6812_RGBW_COLD.bin`
+
+Troubleshooting:
+To erase the flash which is usually not neccesery, execute following command before uploading the firmware: `esptool.py erase_flash`. If esptool.py can't find the ESP32-S2 port or can't switch it automatically into the bootloader mode: press board `reset` + `en` buttons, then release `reset`, next release `en` and start flashing it with esptool.py. Remember to manually reset the board afterwards: esptool.py won't be able to do that.
+
+**Generic ESP32:**
+
 Recommend to use [esphome-flasher](https://github.com/esphome/esphome-flasher/releases)  
-
-ESP32-S2 lolin mini requires using `esptool.py` to flash the firmware.
-
-Generic ESP32:
 
 For **RGBW LED strip** like RGBW SK6812 NEUTRAL white choose: *firmware_esp32_SK6812_RGBW_NEUTRAL.bin*  
   
