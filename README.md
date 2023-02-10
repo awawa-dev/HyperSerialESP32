@@ -28,12 +28,16 @@ RGB to RGBW conversion is calibrated for the neutral white channel BTF SK6812 bu
 Why the data integrity check was introduced which causes incompatibility with other software? Because at 2Mb speed many chip-makers allow few percent error in the transmission. And we do not want to have any distracting flashes. Broken frames are abandon without showing them. At 100Hz for 250 leds approximately 1-5% of the frames are broken.
   
 # Flashing
-  
+
+There are two versions of the firmware. The 'factory' and the 'base' one. Factory firmware should be flashed to offset 0x0, base firmware to offset 0x10000.
+
 **ESP32-S2 Lolin mini:**
 
 Requires using `esptool.py` to flash the firmware e.g.  
 
 `esptool.py write_flash 0x10000 firmware_esp32_s2_mini_SK6812_RGBW_COLD.bin`
+or
+`esptool.py write_flash 0x0 firmware_esp32_s2_mini_SK6812_RGBW_COLD.factory.bin`
 
 Troubleshooting: ESP32-S2 Lolin mini recovery procedure.  
 1. Put the board into dfu mode using board buttons: press board `Rst` + `0` buttons, then release `Rst`, next release `0`  
