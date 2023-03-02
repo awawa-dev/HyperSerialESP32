@@ -50,7 +50,7 @@ uint8_t _ledBuffer[TEST_LEDS_NUMBER * 3 + 6 + 8];
 
 /**
  * @brief Mockup Serial class to simulate the real communition
- * 
+ *
  */
 
 class SerialTester
@@ -60,7 +60,7 @@ class SerialTester
 
 	public:
 
-		void createTestFrame(bool _white_channel_calibration, uint8_t _white_channel_limit = 0, 
+		void createTestFrame(bool _white_channel_calibration, uint8_t _white_channel_limit = 0,
 						uint8_t _white_channel_red = 0, uint8_t _white_channel_green = 0,
 						uint8_t _white_channel_blue = 0)
 		{
@@ -68,7 +68,7 @@ class SerialTester
 			_ledBuffer[1] = 'w';
 			_ledBuffer[2] = (_white_channel_calibration) ? 'A' : 'a';
 			_ledBuffer[4] = (TEST_LEDS_NUMBER-1) & 0xff;
-			_ledBuffer[3] = ((TEST_LEDS_NUMBER-1) >> 8) & 0xff;			
+			_ledBuffer[3] = ((TEST_LEDS_NUMBER-1) >> 8) & 0xff;
 			_ledBuffer[5] = _ledBuffer[3] ^ _ledBuffer[4] ^ 0x55;
 
 			uint8_t* writer = &(_ledBuffer[6]);
@@ -81,7 +81,7 @@ class SerialTester
 				*(writer++)=random(255);
 			}
 
-			
+
 			if (_white_channel_calibration)
 			{
 				*(writer++) = _white_channel_limit;
@@ -101,9 +101,9 @@ class SerialTester
 			*(writer++) = (uint8_t)fletcher1;
 			*(writer++) = (uint8_t)fletcher2;
 			*(writer++) = (uint8_t)((fletcherExt != 0x41) ? fletcherExt : 0xaa);
-			
+
 			frameSize = (int)(writer - _ledBuffer);
-			sent = 0;			
+			sent = 0;
 		}
 
 
@@ -151,18 +151,18 @@ class SerialTester
 
 		void println(const String &s)
 		{
-			
+
 		}
 } SerialPort;
 
 
 /**
- * @brief Mockup LED driver to verify correctness of the received LEDs color values 
- * 
+ * @brief Mockup LED driver to verify correctness of the received LEDs color values
+ *
  */
 
 class ProtocolTester {
-	int ledCount;	
+	int ledCount;
 	int currentIndex;
 	int lastCount;
 	bool first;
@@ -171,7 +171,7 @@ class ProtocolTester {
 		ProtocolTester(int _count, int _pin) : ProtocolTester(_count)
 		{
 			if (_pin == SECOND_SEGMENT_DATA_PIN)
-				first = false;				
+				first = false;
 		}
 
 		ProtocolTester(int _count)
@@ -179,7 +179,7 @@ class ProtocolTester {
 			first = true;
 			ledCount = _count;
 			currentIndex = 0;
-			lastCount = 0;					
+			lastCount = 0;
 		}
 
 		bool CanShow()
@@ -188,15 +188,15 @@ class ProtocolTester {
 		}
 
 		void Show(bool safe = true)
-		{			
+		{
 			lastCount = currentIndex;
 			currentIndex = 0;
 		}
 
 		void Begin()
 		{
-			
-		}		
+
+		}
 
 		void Begin(int _pin1, int _pin2, int _pin3, int _pin4)
 		{
@@ -211,11 +211,11 @@ class ProtocolTester {
 
 		/**
 		 * @brief Very important: verify LED color, compare it to the origin
-		 * 
-		 * @param indexPixel 
-		 * @param color 
+		 *
+		 * @param indexPixel
+		 * @param color
 		 */
-		#ifdef NEOPIXEL_RGBW		
+		#ifdef NEOPIXEL_RGBW
 			void SetPixelColor(uint16_t indexPixel, RgbwColor color)
 			{
 				TEST_ASSERT_EQUAL_INT_MESSAGE(currentIndex, indexPixel, "Unexpected LED index");
@@ -242,7 +242,7 @@ class ProtocolTester {
 				currentIndex = indexPixel + 1;
 				lastCount = 0;
 			}
-		#else		
+		#else
 			void SetPixelColor(uint16_t indexPixel, RgbColor color)
 			{
 				TEST_ASSERT_EQUAL_INT_MESSAGE(currentIndex, indexPixel, "Unexpected LED index");
@@ -269,7 +269,7 @@ class ProtocolTester {
 
 /**
  * @brief Send RGBW calibration data and verify it all (including proper colors rendering)
- * 
+ *
  */
 void MultiSegmentTest_SendRgbwCalibration()
 {
@@ -278,7 +278,7 @@ void MultiSegmentTest_SendRgbwCalibration()
 	base.queueCurrent = 0;
 	base.queueEnd = 0;
 	statistics.update(0);
-	
+
 	while(SerialPort.toSend() > 0)
 	{
 		serialTaskHandler();
@@ -287,13 +287,13 @@ void MultiSegmentTest_SendRgbwCalibration()
 	processData();
 	TEST_ASSERT_EQUAL_INT_MESSAGE(1, statistics.getGoodFrames(), "Frame is not received");
 	TEST_ASSERT_EQUAL_INT_MESSAGE(SECOND_SEGMENT_START_INDEX, base.getLedStrip1()->getLastCount(), "Not all LEDs were set up (segment1)");
-	TEST_ASSERT_EQUAL_INT_MESSAGE(TEST_LEDS_NUMBER - SECOND_SEGMENT_START_INDEX, base.getLedStrip2()->getLastCount(), "Not all LEDs were set up(segment2)");	
+	TEST_ASSERT_EQUAL_INT_MESSAGE(TEST_LEDS_NUMBER - SECOND_SEGMENT_START_INDEX, base.getLedStrip2()->getLastCount(), "Not all LEDs were set up(segment2)");
 	TEST_ASSERT_EQUAL_MESSAGE(true, calibrationConfig.compareCalibrationSettings(10,20,30,40), "Incorrect calibration result");
 
 	// should not change if the frame doesnt contain calibration data
 	SerialPort.createTestFrame(false);
 	statistics.update(0);
-	
+
 	while(SerialPort.toSend() > 0)
 	{
 		serialTaskHandler();
@@ -308,7 +308,7 @@ void MultiSegmentTest_SendRgbwCalibration()
 	// last test
 	SerialPort.createTestFrame(true, 255, 128, 128, 128);
 	statistics.update(0);
-	
+
 	while(SerialPort.toSend() > 0)
 	{
 		serialTaskHandler();
@@ -323,7 +323,7 @@ void MultiSegmentTest_SendRgbwCalibration()
 
 /**
  * @brief Send 100 RGB/RGBW frames and verify it all (including proper colors rendering)
- * 
+ *
  */
 void MultiSegmentTest_Send100Frames()
 {
@@ -334,7 +334,7 @@ void MultiSegmentTest_Send100Frames()
 	{
 		SerialPort.createTestFrame(false);
 		statistics.update(0);
-		
+
 		while(SerialPort.toSend() > 0)
 		{
 			serialTaskHandler();
@@ -349,7 +349,7 @@ void MultiSegmentTest_Send100Frames()
 
 /**
  * @brief Send 200 RGB/RGBW valid/invalid frames and verify it all (including proper colors rendering)
- * 
+ *
  */
 void MultiSegmentTest_Send200UncertainFrames()
 {
@@ -370,7 +370,7 @@ void MultiSegmentTest_Send200UncertainFrames()
 			backup = _ledBuffer[index];
 			_ledBuffer[index] =  backup ^ 0xff;
 		}
-		
+
 		while(SerialPort.toSend() > 0)
 		{
 			serialTaskHandler();
@@ -405,7 +405,7 @@ void setup()
 {
 	delay(1000);
 	randomSeed(analogRead(0));
-	UNITY_BEGIN();	
+	UNITY_BEGIN();
 	#ifdef NEOPIXEL_RGBW
 		RUN_TEST(MultiSegmentTest_SendRgbwCalibration);
 	#endif
