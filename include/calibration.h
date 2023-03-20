@@ -2,7 +2,7 @@
 *
 *  MIT License
 *
-*  Copyright (c) 2022 awawa-dev
+*  Copyright (c) 2023 awawa-dev
 *
 *  https://github.com/awawa-dev/HyperSerialESP32
 *
@@ -51,17 +51,17 @@ struct
 class CalibrationConfig
 {
 	// calibration parameters
-	uint8_t gain = 0xFF;	
+	uint8_t gain = 0xFF;
 	uint8_t red = 0xA0;
 	uint8_t green = 0xA0;
 	uint8_t blue = 0xA0;
 
 	/**
 	 * @brief Build the LUT table using provided parameters
-	 * 
+	 *
 	 */
 	void prepareCalibration()
-	{	
+	{
 		// prepare LUT calibration table, cold white is much better than "neutral" white
 		for (uint32_t i = 0; i < 256; i++)
 		{
@@ -77,7 +77,7 @@ class CalibrationConfig
 			channelCorrection.blue[i]  = (uint8_t)std::min(ROUND_DIVIDE(_blue, 0xFF), (uint32_t)0xFF);
 		}
 	}
-	
+
 	public:
 		CalibrationConfig()
 		{
@@ -86,7 +86,7 @@ class CalibrationConfig
 
 		/**
 		 * @brief Compare base calibration settings
-		 * 
+		 *
 		 */
 		bool compareCalibrationSettings(uint8_t _gain, uint8_t _red, uint8_t _green, uint8_t _blue)
 		{
@@ -95,11 +95,11 @@ class CalibrationConfig
 
 		/**
 		 * @brief Set the parameters that define RGB to RGBW transformation
-		 * 
-		 * @param _gain 
-		 * @param _red 
-		 * @param _green 
-		 * @param _blue 
+		 *
+		 * @param _gain
+		 * @param _red
+		 * @param _green
+		 * @param _blue
 		 */
 		void setParamsAndPrepareCalibration(uint8_t _gain, uint8_t _red, uint8_t _green, uint8_t _blue)
 		{
@@ -110,17 +110,17 @@ class CalibrationConfig
 				green = _green;
 				blue = _blue;
 				prepareCalibration();
-			}			
-		}		
+			}
+		}
 
 		/**
 		 * @brief print RGBW calibration parameters when no data is received
-		 * 
+		 *
 		 */
 		void printCalibration()
 		{
 			#ifdef SerialPort
-				char output[128];	
+				char output[128];
 				snprintf(output, sizeof(output),"RGBW => Gain: %i/255, red: %i, green: %i, blue: %i\r\n", gain, red, green, blue);
 				SerialPort.print(output);
 			#endif

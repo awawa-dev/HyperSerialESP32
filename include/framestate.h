@@ -2,7 +2,7 @@
 *
 *  MIT License
 *
-*  Copyright (c) 2022 awawa-dev
+*  Copyright (c) 2023 awawa-dev
 *
 *  https://github.com/awawa-dev/HyperSerialESP32
 *
@@ -30,7 +30,7 @@
 
 /**
  * @brief my AWA frame protocol definition
- * 
+ *
  */
 enum class AwaProtocol
 {
@@ -54,7 +54,7 @@ enum class AwaProtocol
 
 /**
  * @brief Contains current state of the incoming frame
- * 
+ *
  */
 class
 {
@@ -68,13 +68,13 @@ class
 	uint16_t fletcherExt = 0;
 	uint8_t position = 0;
 
-	public:			
+	public:
 		ColorDefinition color;
 
 		/**
 		 * @brief Reset statistics for new frame
-		 * 
-		 * @param input 
+		 *
+		 * @param input
 		 */
 		inline void init(byte input)
 		{
@@ -90,8 +90,8 @@ class
 
 		/**
 		 * @brief get computed CRC
-		 * 
-		 * @return uint8_t 
+		 *
+		 * @return uint8_t
 		 */
 		inline uint8_t getCRC()
 		{
@@ -100,8 +100,8 @@ class
 
 		/**
 		 * @brief Get the color count reported by the frame
-		 * 
-		 * @return uint16_t 
+		 *
+		 * @return uint16_t
 		 */
 		inline uint16_t getCount()
 		{
@@ -110,8 +110,8 @@ class
 
 		/**
 		 * @brief Get the Fletcher1 total sum
-		 * 
-		 * @return uint16_t 
+		 *
+		 * @return uint16_t
 		 */
 		inline uint16_t getFletcher1()
 		{
@@ -120,8 +120,8 @@ class
 
 		/**
 		 * @brief Get the Fletcher2 total sum
-		 * 
-		 * @return uint16_t 
+		 *
+		 * @return uint16_t
 		 */
 		inline uint16_t getFletcher2()
 		{
@@ -130,18 +130,18 @@ class
 
 		/**
 		 * @brief Get the FletcherExt total sum
-		 * 
-		 * @return uint16_t 
+		 *
+		 * @return uint16_t
 		 */
 		inline uint16_t getFletcherExt()
 		{
 			return (fletcherExt != 0x41) ? fletcherExt : 0xaa;
-		}		
+		}
 
 		/**
 		 * @brief Get and increase the current Led index
-		 * 
-		 * @return uint16_t 
+		 *
+		 * @return uint16_t
 		 */
 		inline uint16_t getCurrentLedIndex()
 		{
@@ -150,8 +150,8 @@ class
 
 		/**
 		 * @brief Set if frame protocol version 2 (contains calibration data)
-		 * 
-		 * @param newVer 
+		 *
+		 * @param newVer
 		 */
 		inline void setProtocolVersion2(bool newVer)
 		{
@@ -160,9 +160,9 @@ class
 
 		/**
 		 * @brief Verify if frame protocol version 2 (contains calibration data)
-		 * 
-		 * @return true 
-		 * @return false 
+		 *
+		 * @return true
+		 * @return false
 		 */
 		inline bool isProtocolVersion2()
 		{
@@ -171,8 +171,8 @@ class
 
 		/**
 		 * @brief  Set new AWA frame state
-		 * 
-		 * @param newState 
+		 *
+		 * @param newState
 		 */
 		inline void setState(AwaProtocol newState)
 		{
@@ -181,18 +181,18 @@ class
 
 		/**
 		 * @brief Get current AWA frame state
-		 * 
-		 * @return AwaProtocol 
+		 *
+		 * @return AwaProtocol
 		 */
 		inline AwaProtocol getState()
 		{
 			return state;
-		}		
+		}
 
 		/**
 		 * @brief Update CRC based on current and previuos input
-		 * 
-		 * @param input 
+		 *
+		 * @param input
 		 */
 		inline void computeCRC(byte input)
 		{
@@ -202,8 +202,8 @@ class
 
 		/**
 		 * @brief Update Fletcher checksumn for incoming input
-		 * 
-		 * @param input 
+		 *
+		 * @param input
 		 */
 		inline void addFletcher(byte input)
 		{
@@ -214,23 +214,23 @@ class
 
 		/**
 		 * @brief Check if the calibration data was updated and calculate new one
-		 * 
-		 */			
+		 *
+		 */
 		inline void updateIncomingCalibration()
 		{
 			#ifdef NEOPIXEL_RGBW
 				if (protocolVersion2)
 				{
-					calibrationConfig.setParamsAndPrepareCalibration(calibration.gain, calibration.red, calibration.green, calibration.blue);					
+					calibrationConfig.setParamsAndPrepareCalibration(calibration.gain, calibration.red, calibration.green, calibration.blue);
 				}
 			#endif
-		}		
+		}
 
-		
+
 		#ifdef NEOPIXEL_RGBW
 			/**
 			* @brief Compute && correct the white channel
-			* 
+			*
 			*/
 			inline void rgb2rgbw()
 			{
@@ -246,7 +246,7 @@ class
 
 		/**
 		 * @brief Incoming calibration data
-		 * 
+		 *
 		 */
 		struct
 		{
@@ -255,7 +255,7 @@ class
 			uint8_t green = 0;
 			uint8_t blue = 0;
 		} calibration;
-		
+
 } frameState;
 
 #endif

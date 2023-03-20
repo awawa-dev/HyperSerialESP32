@@ -120,9 +120,9 @@ build_flags = -DNEOPIXEL_RGB -DDATA_PIN=2 ${env.build_flags} -DSECOND_SEGMENT_ST
 ...
 ```
 Implementation example:
-- The diagram of the board for WS2812b including ESP32 and the SN74AHCT125N 74AHCT125 [level shifter](https://github.com/awawa-dev/HyperHDR/wiki/Level-Shifter).
+- The diagram of the board for WS2812b/SK6812 including ESP32 and the SN74AHCT125N 74AHCT125 [level shifter](https://github.com/awawa-dev/HyperHDR/wiki/Level-Shifter).
 
-![HyperSPI](https://user-images.githubusercontent.com/85223482/216823785-746b940c-73ab-4b2f-a243-91dbc9d22816.png)
+![HyperSPI](https://user-images.githubusercontent.com/85223482/222923979-f344349a-1f8b-4195-94ca-51721923359e.png)
 
 # Some benchmark results
 

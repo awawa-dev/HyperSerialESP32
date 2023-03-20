@@ -2,7 +2,7 @@
 *
 *  MIT License
 *
-*  Copyright (c) 2022 awawa-dev
+*  Copyright (c) 2023 awawa-dev
 *
 *  https://github.com/awawa-dev/HyperSerialESP32
 *
@@ -41,9 +41,9 @@ class
 
 	public:
 		/**
-		 * @brief Get the start time of the current period 
-		 * 
-		 * @return unsigned long 
+		 * @brief Get the start time of the current period
+		 *
+		 * @return unsigned long
 		 */
 		inline unsigned long getStartTime()
 		{
@@ -52,16 +52,16 @@ class
 
 		/**
 		 * @brief Detected new frame
-		 * 
+		 *
 		 */
 		inline void increaseTotal()
-		{		
+		{
 			totalFrames++;
 		}
 
 		/**
 		 * @brief The frame is received and shown
-		 * 
+		 *
 		 */
 		inline void increaseShow()
 		{
@@ -70,27 +70,27 @@ class
 
 		/**
 		 * @brief The frame is received correctly (not yet displayed)
-		 * 
+		 *
 		 */
 		inline void increaseGood()
-		{		
+		{
 			goodFrames++;
 		}
 
 		/**
 		 * @brief Get number of correctly received frames
-		 * 
-		 * @return uint16_t 
+		 *
+		 * @return uint16_t
 		 */
 		inline uint16_t getGoodFrames()
-		{		
+		{
 			return goodFrames;
 		}
 
 		/**
 		 * @brief Period restart, save current statistics ans send them later if there is no incoming communication
-		 * 
-		 * @param currentTime 
+		 *
+		 * @param currentTime
 		 */
 		void update(unsigned long currentTime)
 		{
@@ -109,9 +109,9 @@ class
 
 		/**
 		 * @brief Print last saved statistics to the serial port
-		 * 
-		 * @param curTime 
-		 * @param taskHandle 
+		 *
+		 * @param curTime
+		 * @param taskHandle
 		 */
 		void print(unsigned long curTime, TaskHandle_t taskHandle1, TaskHandle_t taskHandle2)
 		{
@@ -121,14 +121,14 @@ class
 			goodFrames = 0;
 			totalFrames = 0;
 			showFrames = 0;
-			
-			snprintf(output, sizeof(output), "HyperHDR frames: %u (FPS), receiv.: %u, good: %u, incompl.: %u, mem1: %i, mem2: %i, heap: %i\r\n", 
+
+			snprintf(output, sizeof(output), "HyperHDR frames: %u (FPS), receiv.: %u, good: %u, incompl.: %u, mem1: %i, mem2: %i, heap: %i\r\n",
 						finalShowFrames, finalTotalFrames,finalGoodFrames,(finalTotalFrames - finalGoodFrames),
-						(taskHandle1 != nullptr) ? uxTaskGetStackHighWaterMark(taskHandle1) : 0, 
+						(taskHandle1 != nullptr) ? uxTaskGetStackHighWaterMark(taskHandle1) : 0,
 						(taskHandle2 != nullptr) ? uxTaskGetStackHighWaterMark(taskHandle2) : 0,
-						ESP.getFreeHeap());			
+						ESP.getFreeHeap());
 			SerialPort.print(output);
-			
+
 			#if defined(NEOPIXEL_RGBW)
 				calibrationConfig.printCalibration();
 			#endif
@@ -136,7 +136,7 @@ class
 
 		/**
 		 * @brief Reset statistics
-		 * 
+		 *
 		 */
 		void reset(unsigned long currentTime)
 		{
@@ -145,17 +145,17 @@ class
 			finalShowFrames = 0;
 			finalGoodFrames = 0;
 			finalTotalFrames = 0;
-			
+
 			goodFrames = 0;
 			totalFrames = 0;
 			showFrames = 0;
-		}		
+		}
 
 		void lightReset(unsigned long curTime, bool hasData)
 		{
 			if (hasData)
 				startTime = curTime;
-			
+
 			goodFrames = 0;
 			totalFrames = 0;
 			showFrames = 0;

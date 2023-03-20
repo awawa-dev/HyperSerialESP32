@@ -2,7 +2,7 @@
 *
 *  MIT License
 *
-*  Copyright (c) 2022 awawa-dev
+*  Copyright (c) 2023 awawa-dev
 *
 *  https://github.com/awawa-dev/HyperSerialESP32
 *
@@ -99,7 +99,7 @@
 				#undef LED_DRIVER
 				#define LED_DRIVER NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0X8Sk6812Method>
 				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0X8Sk6812Method>
-			#else			
+			#else
 				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s0Sk6812Method>
 			#endif
 		#elif NEOPIXEL_RGB
@@ -147,7 +147,7 @@
 	#pragma message(VAR_NAME_VALUE2(LED_DRIVER2))
 #else
 	#pragma message(VAR_NAME_VALUE2(LED_DRIVER))
-	
+
 	class LED_DRIVER2 {
 		public:
 		bool CanShow() {return true;}
@@ -160,8 +160,8 @@
 
 /**
  * @brief separete thread for handling incoming data using cyclic buffer
- * 
- * @param parameters 
+ *
+ * @param parameters
  */
 void processDataTask(void * parameters)
 {
@@ -175,7 +175,7 @@ void processDataTask(void * parameters)
 void processSerialTask(void * parameters)
 {
 	for(;;)
-	{		
+	{
 		if (serialTaskHandler() || base.queueCurrent != base.queueEnd)
 			xSemaphoreGive(base.i2sXSemaphore);
 		yield();
@@ -185,7 +185,7 @@ void processSerialTask(void * parameters)
 void setup()
 {
 	bool multicore = true;
-	
+
 	// Init serial port
 	Serial.setRxBufferSize(MAX_BUFFER - 1);
 	Serial.setTimeout(50);
@@ -207,7 +207,7 @@ void setup()
 		Serial.println(HELLO_MESSAGE);
 		#if defined(SECOND_SEGMENT_START_INDEX)
 			SerialPort.write("SECOND_SEGMENT_START_INDEX = ");
-			SerialPort.println(SECOND_SEGMENT_START_INDEX);	
+			SerialPort.println(SECOND_SEGMENT_START_INDEX);
 		#endif
 
 		// Colorspace/Led type info
@@ -236,25 +236,25 @@ void setup()
 	{
 		// create a semaphore to synchronize threads
 		base.i2sXSemaphore = xSemaphoreCreateBinary();
-		
+
 
 		// create new task for handling received serial data on core 0
 		xTaskCreatePinnedToCore(
 			processDataTask,
 			"processDataTask",
 			5096,
-			NULL,        
-			5,           
-			&base.processDataHandle,      
+			NULL,
+			5,
+			&base.processDataHandle,
 			0);
 		// serial handler on core 1
 		xTaskCreatePinnedToCore(
 			processSerialTask,
 			"processSerialTask",
 			4096,
-			NULL,        
-			2,           
-			&base.processSerialHandle,      
+			NULL,
+			2,
+			&base.processSerialHandle,
 			1);
 	}
 }
@@ -263,7 +263,7 @@ void loop()
 {
 	if (base.processDataHandle == nullptr && base.processSerialHandle == nullptr)
 	{
-		serialTaskHandler();	
+		serialTaskHandler();
 		processData();
 	}
 }
