@@ -128,7 +128,7 @@
 			#ifdef PARALLEL_MODE
 				#undef LED_DRIVER
 				#define LED_DRIVER NeoPixelBus<NeoGrbFeature, NeoEsp32I2s1X8Ws2812Method>
-				#define LED_DRIVER2 NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s1X8Ws2812Method>
+				#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32I2s1X8Ws2812Method>
 			#else
 				#define LED_DRIVER2 NeoPixelBus<NeoGrbFeature, NeoEsp32I2s0Ws2812xMethod>
 			#endif
