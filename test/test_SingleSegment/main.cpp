@@ -214,6 +214,11 @@ class SerialTester
 			return 0;
 		}
 
+		inline size_t print(char*)
+		{
+			return 0;
+		}		
+
 		int available(void)
 		{
 			if (sent < frameSize)
@@ -489,7 +494,7 @@ void SingleSegmentTest_Send200UncertainFrames()
 
 void setup()
 {
-	delay(1000);
+	delay(1500);
 	randomSeed(analogRead(0));
 	UNITY_BEGIN();
 	#ifdef NEOPIXEL_RGBW
