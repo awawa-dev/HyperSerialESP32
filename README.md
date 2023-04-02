@@ -42,9 +42,9 @@ Troubleshooting: ESP32-S2 Lolin mini recovery procedure.
 1. Put the board into dfu mode using board buttons: press board `Rst` + `0` buttons, then release `Rst`, next release `0`  
 Do not reset or disconnect the board until the end of the recovery procedure.
 2. Execute `esptool.py erase_flash`  
-3. Get [circuitpython](https://downloads.circuitpython.org/bin/lolin_s2_mini/pl/adafruit-circuitpython-lolin_s2_mini-pl-8.0.0.bin) Execute `esptool.py write_flash 0x0 adafruit-circuitpython-lolin_s2_mini-pl-8.0.0.bin`  
-4. Execute `esptool.py write_flash 0x10000 firmware_esp32_s2_mini_SK6812_RGBW_COLD.bin`  
-5. Reset the board manually
+3. Flash 'factory' version of the firmware e.g.  
+`esptool.py write_flash 0x0 firmware_esp32_s2_mini_SK6812_RGBW_COLD.factory.bin`  
+4. Reset the board manually
 
 **Generic ESP32:**
 
