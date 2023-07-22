@@ -29,7 +29,7 @@ Why the data integrity check was introduced which causes incompatibility with ot
   
 # Flashing
 
-There are two versions of the firmware. The 'factory' and the 'base' one. Factory firmware should be flashed to offset 0x0, base firmware to offset 0x10000.
+There are two versions of the firmware for ESP32 and ESP32-S2. The 'factory' (in the `recovery_firmware.zip` archive) and the 'base' one. Factory firmware should be flashed to offset 0x0, base firmware to offset 0x10000.
 
 **ESP32-S2 Lolin mini:**
 
@@ -130,33 +130,19 @@ ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin min
 
 **Parallel multi-segments can double your large sk6812/ws2812b setup refresh rate for free. All you need is to properly project & construct the LED strip and use HyperSerialESP32 v9. Parallel communication provides perfect synchronization between Neopixel segments.**
 
+## ESP32 / ESP32-S2 multi segments
+
 | Parallel multi-segment mode / Device                           | ESP32<br> MH-ET LIVE mini @ 4Mb speed |  ESP32-S2<br> Lolin mini @ 5Mb speed   |
 |---------------------------------------------------------------------------------------|--------------------------|------------------------------|
 | 300LEDs RGBW<br>Refresh rate/continues output=100Hz<br>SECOND_SEGMENT_START_INDEX=150 |            100           |               100            |
 | 600LEDs RGBW<br>Refresh rate/continues output=83Hz <br>SECOND_SEGMENT_START_INDEX=300 |             83           |                83            |
 | 900LEDs RGBW<br>Refresh rate/continues output=55Hz <br>SECOND_SEGMENT_START_INDEX=450 |             55           |                55            |
 
-## ESP32 MH-ET LIVE mini 
+## ESP32 / ESP32-S2 single segment 
 
-| Single RGBW LED strip / Device                      | ESP32<br>MH-ET LIVE mini<br>HyperSerialESP32 v9 |
-|-----------------------------------------------------|-------------------------------------------------|
-| 300LEDs RGBW<br>Refresh rate/continues output=83Hz  |                        83                       |
-| 600LEDs RGBW<br>Refresh rate/continues output=42Hz  |                        42                       |
-| 900LEDs RGBW<br>Refresh rate/continues output=28Hz  |                        28                       |
+| Single RGBW LED strip / Device                      | ESP32 MH-ET LIVE mini | generic ESP32 (CH340C) | ESP32-S2 lolin mini |
+|-----------------------------------------------------|-----------------------|------------------------|---------------------|
+| 300LEDs RGBW<br>Refresh rate / continues output=83Hz  |          83         |           83           |          83         |
+| 600LEDs RGBW<br>Refresh rate / continues output=42Hz  |          42         |           42           |          42         |
+| 900LEDs RGBW<br>Refresh rate / continues output=28Hz  |          28         |           28           |          28         |
 
-## Generic ESP32 with CH340C
-
-| Single RGBW LED strip / Device                      | ESP32 (CH340C)<br>HyperSerialESP32 v9 |
-|-----------------------------------------------------|---------------------------------------|
-| 300LEDs RGBW<br>Refresh rate/continues output=83Hz  |                   83                  |
-| 600LEDs RGBW<br>Refresh rate/continues output=42Hz  |                   42                  |
-| 900LEDs RGBW<br>Refresh rate/continues output=28Hz  |                   28                  |
-
-## ESP32-S2 lolin mini performance
-
-| Single RGBW LED strip / Device                      | ESP32-S2 lolin mini<br>HyperSerialESP32 v9 |
-|-----------------------------------------------------|---------------------|
-| 300LEDs RGBW<br>Refresh rate/continues output=83Hz  |          83         |
-| 600LEDs RGBW<br>Refresh rate/continues output=42Hz  |          42         |
-| 900LEDs RGBW<br>Refresh rate/continues output=28Hz  |          28         |
-  
