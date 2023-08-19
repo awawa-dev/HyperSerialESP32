@@ -45,9 +45,9 @@ class
         void init()
         {
             #if defined(LED_POWER_PIN)
-				pinMode(LED_POWER_PIN, OUTPUT);
-				digitalWrite(LED_POWER_PIN, HIGH);
-			#endif
+                pinMode(LED_POWER_PIN, OUTPUT);
+                digitalWrite(LED_POWER_PIN, HIGH);
+            #endif
         }
 
         inline void resetPowerOffTimer()
