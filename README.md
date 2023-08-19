@@ -124,6 +124,13 @@ Implementation example:
 
 ![HyperSPI](https://user-images.githubusercontent.com/85223482/222923979-f344349a-1f8b-4195-94ca-51721923359e.png)
 
+# External power control
+You can configure LED power pin in the `platformio.ini` to power off LEDs while not in use.
+Review the comments at the top of the file:
+* `LED_POWER_PIN` - This is the data pin external power control
+
+Note: For static color configuration this mechanism will turn off the LEDs. To counter this the refresh time must be set to a non zero value in HyperHDR - LED Hardware.
+
 # Some benchmark results
 
 ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin mini is capable of 5Mb. But to give equal chances for a single-segment mode all models were tested using the default speed of 2Mb which should saturate Neopixel data line. Parallel multi-segment mode uses the highest option available because communication performance is critical here.
