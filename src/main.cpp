@@ -155,13 +155,15 @@
 	};
 #endif
 
+#define SerialPort Serial
+
 #if defined(LED_POWER_PIN)
 	#pragma message(VAR_NAME_VALUE(LED_POWER_PIN))
+	#include "powercontrol.h"
 #endif
 
-#define SerialPort Serial
 #include "main.h"
-#include "powercontrol.h"
+
 
 /**
  * @brief separete thread for handling incoming data using cyclic buffer
@@ -181,16 +183,8 @@ void processSerialTask(void * parameters)
 {
 	for(;;)
 	{
-		bool receivedData = serialTaskHandler();
-		if (receivedData || base.queueCurrent != base.queueEnd)
+		if (serialTaskHandler() || base.queueCurrent != base.queueEnd)
 			xSemaphoreGive(base.i2sXSemaphore);
-		
-		if(receivedData)
-		{
-			powerControl.resetPowerOffTimer();
-		}
-		powerControl.update(millis());
-
 		yield();
 	}
 }
@@ -282,13 +276,7 @@ void loop()
 {
 	if (base.processDataHandle == nullptr && base.processSerialHandle == nullptr)
 	{
-		bool receivedData = serialTaskHandler();
-
-		if(receivedData)
-		{
-			powerControl.resetPowerOffTimer();
-		}
-
+		serialTaskHandler();
 		processData();
 	}
 }

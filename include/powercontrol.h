@@ -35,59 +35,53 @@
  */
 class
 {
-    // timeout after which the leds will be turned off if no reset is applied
+	// timeout after which the leds will be turned off if no reset is applied
 	const unsigned long POWER_OFF_PERIOD = 5 * 1000;
 
 	// last timestamp power off timer got reset
-	unsigned long lastPowerOffResetTimestamp = 0;
+	volatile unsigned long lastPowerOffResetTimestamp = 0;
 
-    public:
-        void init()
-        {
-            #if defined(LED_POWER_PIN)
-                pinMode(LED_POWER_PIN, OUTPUT);
-                digitalWrite(LED_POWER_PIN, HIGH);
-            #endif
-        }
+	// caching the PIN state to avoid unnecessary calls to the GPIO register
+	volatile int currentPowerPinMode = LOW;
 
-        inline void resetPowerOffTimer()
-        {
-            lastPowerOffResetTimestamp = millis();
-        }
+	public:
+		void init()
+		{
+			pinMode(LED_POWER_PIN, OUTPUT);
+			lastPowerOffResetTimestamp = millis();
+			powerOn();
+		}
 
-        inline void powerOn()
-        {
-            #if defined(LED_POWER_PIN)
-                digitalWrite(LED_POWER_PIN, HIGH);
-            #endif
-        }
+		inline void powerOn()
+		{
+			if (currentPowerPinMode != HIGH)
+			{
+				currentPowerPinMode = HIGH;
+				digitalWrite(LED_POWER_PIN, currentPowerPinMode);
+			}
+		}
 
-        inline void powerOff()
-        {
-            #if defined(LED_POWER_PIN)
-                digitalWrite(LED_POWER_PIN, LOW);
-            #endif
-        }
+		inline void powerOff()
+		{
+			if (currentPowerPinMode != LOW)
+			{
+				currentPowerPinMode = LOW;
+				digitalWrite(LED_POWER_PIN, currentPowerPinMode);
+			}
+		}
 
-        inline void powerToggle()
-        {
-            #if defined(LED_POWER_PIN)
-                auto state = digitalRead(LED_POWER_PIN);
-                digitalWrite(LED_POWER_PIN, (state != LOW) ? LOW : HIGH);              
-            #endif
-        }
-
-        void update(const unsigned long currentTimestamp)
-        {
-            if (currentTimestamp - lastPowerOffResetTimestamp > POWER_OFF_PERIOD)
-            {
-                powerOff();
-            }
-            else
-            {
-                powerOn();
-            }
-        }
+		void update(bool hasData)
+		{
+			if (hasData)
+			{
+				powerOn();
+				lastPowerOffResetTimestamp = millis();
+			}
+			else if (millis() - lastPowerOffResetTimestamp > POWER_OFF_PERIOD)
+			{
+				powerOff();
+			}
+		}
 
 } powerControl;
 

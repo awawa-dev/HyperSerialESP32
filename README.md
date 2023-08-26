@@ -124,12 +124,12 @@ Implementation example:
 
 ![HyperSPI](https://user-images.githubusercontent.com/85223482/222923979-f344349a-1f8b-4195-94ca-51721923359e.png)
 
-# External power control
+# External relay power control
 You can configure LED power pin in the `platformio.ini` to power off LEDs while not in use.
 Review the comments at the top of the file:
 * `LED_POWER_PIN` - This is the data pin external power control
 
-Note: For static color configuration this mechanism will turn off the LEDs. To counter this the refresh time must be set to a non zero value in HyperHDR - LED Hardware.
+Note: For static color configuration this mechanism will turn off the LEDs. To counter this enable "Continuous Output" in HyperHDR "Smoothing" module. For esp32 and relay control, you may want to disable the "Handshake" option in the Adalight HyperHDR driver to avoid the relay immediately shutting down when resetting the device while initializing the connection.
 
 # Some benchmark results
 
