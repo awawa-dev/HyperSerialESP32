@@ -61,6 +61,10 @@ bool serialTaskHandler()
 		}
 	}
 
+#if defined(LED_POWER_PIN)
+	powerControl.update(incomingSize > 0);
+#endif
+
 	return (incomingSize > 0);
 }
 
