@@ -2,7 +2,7 @@
 *
 *  MIT License
 *
-*  Copyright (c) 2023 awawa-dev
+*  Copyright (c) 2024 awawa-dev
 *
 *  https://github.com/awawa-dev/HyperSerialESP32
 *
@@ -217,7 +217,7 @@ class SerialTester
 		inline size_t print(char*)
 		{
 			return 0;
-		}		
+		}
 
 		int available(void)
 		{
