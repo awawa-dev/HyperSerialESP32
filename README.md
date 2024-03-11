@@ -128,6 +128,7 @@ Implementation example:
 You can configure LED power pin in the `platformio.ini` to power off LEDs while not in use.
 Review the comments at the top of the file:
 * `LED_POWER_PIN` - This is the data pin external power control
+* `LED_POWER_INVERT` - This inverts the output of the exernal power control pin. If set to `false`, the pin state will be low when the relay is turned off. If set to `true`, the pin state will be high when the relay is off. If not defined, default is `false`.
 
 Note: For static color configuration this mechanism will turn off the LEDs. To counter this enable "Continuous Output" in HyperHDR "Smoothing" module. For esp32 and relay control, you may want to disable the "Handshake" option in the Adalight HyperHDR driver to avoid the relay immediately shutting down when resetting the device while initializing the connection.
 

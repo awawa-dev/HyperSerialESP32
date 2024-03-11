@@ -42,30 +42,30 @@ class
 	volatile unsigned long lastPowerOffResetTimestamp = 0;
 
 	// caching the PIN state to avoid unnecessary calls to the GPIO register
-	volatile int currentPowerPinMode = LOW;
+	volatile int currentPowerPinMode = LED_POWER_INVERT ? LOW : HIGH;
 
 	public:
 		void init()
 		{
 			pinMode(LED_POWER_PIN, OUTPUT);
 			lastPowerOffResetTimestamp = millis();
-			powerOn();
+			powerOff();
 		}
 
 		inline void powerOn()
 		{
-			if (currentPowerPinMode != HIGH)
+			if (currentPowerPinMode != LED_POWER_INVERT ? LOW : HIGH)
 			{
-				currentPowerPinMode = HIGH;
+				currentPowerPinMode = LED_POWER_INVERT ? LOW : HIGH;
 				digitalWrite(LED_POWER_PIN, currentPowerPinMode);
 			}
 		}
 
 		inline void powerOff()
 		{
-			if (currentPowerPinMode != LOW)
+			if (currentPowerPinMode != LED_POWER_INVERT ? HIGH : LOW)
 			{
-				currentPowerPinMode = LOW;
+				currentPowerPinMode = LED_POWER_INVERT ? HIGH : LOW;
 				digitalWrite(LED_POWER_PIN, currentPowerPinMode);
 			}
 		}
