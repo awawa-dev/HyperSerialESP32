@@ -28,6 +28,13 @@
 #ifndef POWERCONTROL_H
 #define POWERCONTROL_H
 
+#if LED_POWER_INVERT
+	#define FUNCTION_POWER_ON() powerOff()
+	#define FUNCTION_POWER_OFF() powerOn()
+#else
+	#define FUNCTION_POWER_ON() powerOn()
+	#define FUNCTION_POWER_OFF() powerOff()
+#endif
 
 /**
  * @brief Contains logic for turning on and off the power to leds using external relay
@@ -42,30 +49,30 @@ class
 	volatile unsigned long lastPowerOffResetTimestamp = 0;
 
 	// caching the PIN state to avoid unnecessary calls to the GPIO register
-	volatile int currentPowerPinMode = LED_POWER_INVERT ? HIGH : LOW;
+	volatile int currentPowerPinMode = LED_POWER_INVERT ? LOW : HIGH;
 
 	public:
 		void init()
 		{
 			pinMode(LED_POWER_PIN, OUTPUT);
 			lastPowerOffResetTimestamp = millis();
-			powerOn();
+			powerOff();
 		}
 
-		inline void powerOn()
+		inline void FUNCTION_POWER_ON()
 		{
-			if (currentPowerPinMode != LED_POWER_INVERT ? LOW : HIGH)
+			if (currentPowerPinMode != HIGH)
 			{
-				currentPowerPinMode = LED_POWER_INVERT ? LOW : HIGH;
+				currentPowerPinMode = HIGH;
 				digitalWrite(LED_POWER_PIN, currentPowerPinMode);
 			}
 		}
 
-		inline void powerOff()
+		inline void FUNCTION_POWER_OFF()
 		{
-			if (currentPowerPinMode != LED_POWER_INVERT ? HIGH : LOW)
+			if (currentPowerPinMode != LOW)
 			{
-				currentPowerPinMode = LED_POWER_INVERT ? HIGH : LOW;
+				currentPowerPinMode = LOW;
 				digitalWrite(LED_POWER_PIN, currentPowerPinMode);
 			}
 		}
