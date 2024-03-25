@@ -49,7 +49,7 @@ class
 	volatile unsigned long lastPowerOffResetTimestamp = 0;
 
 	// caching the PIN state to avoid unnecessary calls to the GPIO register
-	volatile int currentPowerPinMode = LED_POWER_INVERT ? LOW : HIGH;
+	volatile int currentPowerPinMode = LOW;
 
 	public:
 		void init()
