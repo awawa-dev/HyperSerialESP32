@@ -157,10 +157,13 @@
 
 #define SerialPort Serial
 
-#if defined(LED_POWER_PIN)
+#ifdef LED_POWER_PIN
 	#pragma message(VAR_NAME_VALUE(LED_POWER_PIN))
+	#pragma message(VAR_NAME_VALUE(LED_POWER_INVERT))
 	#include "powercontrol.h"
 #endif
+
+
 
 #include "main.h"
 

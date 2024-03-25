@@ -28,6 +28,13 @@
 #ifndef POWERCONTROL_H
 #define POWERCONTROL_H
 
+#if LED_POWER_INVERT
+	#define FUNCTION_POWER_ON() powerOff()
+	#define FUNCTION_POWER_OFF() powerOn()
+#else
+	#define FUNCTION_POWER_ON() powerOn()
+	#define FUNCTION_POWER_OFF() powerOff()
+#endif
 
 /**
  * @brief Contains logic for turning on and off the power to leds using external relay
@@ -49,10 +56,10 @@ class
 		{
 			pinMode(LED_POWER_PIN, OUTPUT);
 			lastPowerOffResetTimestamp = millis();
-			powerOn();
+			powerOff();
 		}
 
-		inline void powerOn()
+		inline void FUNCTION_POWER_ON()
 		{
 			if (currentPowerPinMode != HIGH)
 			{
@@ -61,7 +68,7 @@ class
 			}
 		}
 
-		inline void powerOff()
+		inline void FUNCTION_POWER_OFF()
 		{
 			if (currentPowerPinMode != LOW)
 			{
