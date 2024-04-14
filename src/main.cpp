@@ -140,6 +140,9 @@
 	#endif
 	#pragma message(VAR_NAME_VALUE2(LED_DRIVER))
 	#pragma message(VAR_NAME_VALUE(SECOND_SEGMENT_START_INDEX))
+	#ifdef SECOND_SEGMENT_REVERSED
+		#pragma message(VAR_NAME_VALUE(SECOND_SEGMENT_REVERSED))
+	#endif	
 	#pragma message(VAR_NAME_VALUE(SECOND_SEGMENT_DATA_PIN))
 	#ifdef SECOND_SEGMENT_CLOCK_PIN
 		#pragma message(VAR_NAME_VALUE(SECOND_SEGMENT_CLOCK_PIN))
@@ -157,10 +160,15 @@
 
 #define SerialPort Serial
 
-#if defined(LED_POWER_PIN)
+#ifdef LED_POWER_PIN
 	#pragma message(VAR_NAME_VALUE(LED_POWER_PIN))
+	#ifdef LED_POWER_INVERT
+		#pragma message(VAR_NAME_VALUE(LED_POWER_INVERT))
+	#endif
 	#include "powercontrol.h"
 #endif
+
+
 
 #include "main.h"
 
