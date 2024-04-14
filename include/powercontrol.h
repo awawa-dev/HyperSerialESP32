@@ -29,11 +29,11 @@
 #define POWERCONTROL_H
 
 #if LED_POWER_INVERT
-	#define FUNCTION_POWER_ON() powerOff()
-	#define FUNCTION_POWER_OFF() powerOn()
+	#define SET_RELAY_HIGH() powerOff()
+	#define SET_RELAY_LOW() powerOn()
 #else
-	#define FUNCTION_POWER_ON() powerOn()
-	#define FUNCTION_POWER_OFF() powerOff()
+	#define SET_RELAY_HIGH() powerOn()
+	#define SET_RELAY_LOW() powerOff()
 #endif
 
 /**
@@ -59,7 +59,7 @@ class
 			powerOff();
 		}
 
-		inline void FUNCTION_POWER_ON()
+		inline void SET_RELAY_HIGH()
 		{
 			if (currentPowerPinMode != HIGH)
 			{
@@ -68,7 +68,7 @@ class
 			}
 		}
 
-		inline void FUNCTION_POWER_OFF()
+		inline void SET_RELAY_LOW()
 		{
 			if (currentPowerPinMode != LOW)
 			{
