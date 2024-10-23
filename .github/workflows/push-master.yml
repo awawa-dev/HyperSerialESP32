@@ -11,21 +11,21 @@ jobs:
   PlatformIO:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.2.1
     - name: Cache pip
-      uses: actions/cache@v3
+      uses: actions/cache@v4.1.2
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Cache PlatformIO
-      uses: actions/cache@v3
+      uses: actions/cache@v4.1.2
       with:
         path: ~/.platformio
         key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5.2.0
       with:
         python-version: 3.x
     - name: Install PlatformIO
@@ -39,7 +39,7 @@ jobs:
         zip -j .pio/build/recovery_firmware.zip .pio/build/*.factory.bin
         rm -f .pio/build/*.factory.bin
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4.4.3
       name: Upload artifacts (commit)
       if: (startsWith(github.event.ref, 'refs/tags') != true)
       with:
@@ -47,11 +47,11 @@ jobs:
           .pio/build/*.bin
           .pio/build/recovery_firmware.zip
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4.4.3
       name: Upload artifacts (release)
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        name: firmware-release
+        name: firmware-release-generic
         path: |
           .pio/build/*.bin
           .pio/build/recovery_firmware.zip
@@ -77,13 +77,15 @@ jobs:
         if: contains(env.VERSION, 'alpha') || contains(env.VERSION, 'beta')
         run: echo "preRelease=true" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.8
         with:
           name: firmware-release
+          pattern: firmware-release-*
+          merge-multiple: true
 
       # create draft release and upload artifacts
       - name: Create draft release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2.0.8
         with:
           name: HyperSerialESP32 ${{ env.VERSION }}
           tag_name: ${{ env.TAG }}
