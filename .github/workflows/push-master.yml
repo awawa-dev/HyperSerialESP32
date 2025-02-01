@@ -43,7 +43,7 @@ jobs:
         zip -j .pio/build/recovery_firmware.zip .pio/build/*.factory.bin
         rm -f .pio/build/*.factory.bin
 
-    - uses: actions/upload-artifact@v4.5.0
+    - uses: actions/upload-artifact@v4.6.0
       name: Upload artifacts (commit)
       if: (startsWith(github.event.ref, 'refs/tags') != true)
       with:
@@ -51,7 +51,7 @@ jobs:
           .pio/build/*.bin
           .pio/build/recovery_firmware.zip
 
-    - uses: actions/upload-artifact@v4.5.0
+    - uses: actions/upload-artifact@v4.6.0
       name: Upload artifacts (release)
       if: startsWith(github.ref, 'refs/tags/')
       with:
