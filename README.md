@@ -71,13 +71,12 @@ To test the maximum performance in HyperHDR, enable `Image Processing→Smoothin
 Configuring HyperHDR v19beta2 or above.
 - set `Refresh time` to zero
 - set `Baudrate` to 2000000
-- enabled `HyperHDR's AWA protocol`.  
+- enabled `HyperHDR's AWA protocol`
+- enable `ESP8266/ESP32/Rp2040 handshake`
 
 Enabling `White channel calibration` is optional, if you want to fine tune the white channel balance of your sk6812 RGBW LED strip.  
-`ESP8266/ESP32 handshake` could help you to properly initialize the ESP device and enables statistics output to the logs (you must stop the LED device first to get them).  
 
-![obraz](https://user-images.githubusercontent.com/69086569/207109594-0493fe58-3530-46bb-a0a3-31a110475ed6.png)
-
+<img width="600" alt="236870662-12f67d14-c2ca-4ba1-b6a3-e34c27949d19" src="https://github.com/user-attachments/assets/528defd6-ea10-44ab-81be-cd7ea6bfa79c" />
    
 # Compiling
   
