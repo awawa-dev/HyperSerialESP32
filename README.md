@@ -68,10 +68,10 @@ For the RGBW firmware the white channel is automatically calculated and R,G,B ch
 
 To test the maximum performance in HyperHDR, enable `Image Processing→Smoothing→Continuous output`, set a high value for `Update Frequency` in the same tab and set any color in the `Remote Control` tab as the active effect. Get the statistics and optionally adjust `Update Frequency`. After testing, you need to disable `Continuous output`and set `Update frequency`" according to your results.
   
-Configuring HyperHDR v19beta2 or above.
+Configure HyperHDR:
 - set `Refresh time` to zero
 - set `Baudrate` to 2000000
-- enabled `HyperHDR's AWA protocol`
+- enable `HyperHDR's AWA protocol`
 - enable `ESP8266/ESP32/Rp2040 handshake` that may help you to properly initialize the ESP board
 
 Enabling `White channel calibration` is optional, if you want to fine tune the white channel balance of your sk6812 RGBW LED strip.  
