@@ -72,7 +72,7 @@ Configuring HyperHDR v19beta2 or above.
 - set `Refresh time` to zero
 - set `Baudrate` to 2000000
 - enabled `HyperHDR's AWA protocol`
-- enable `ESP8266/ESP32/Rp2040 handshake`
+- enable `ESP8266/ESP32/Rp2040 handshake` that may help you to properly initialize the ESP board
 
 Enabling `White channel calibration` is optional, if you want to fine tune the white channel balance of your sk6812 RGBW LED strip.  
 
