@@ -58,7 +58,7 @@ For **RGB LED strip** like WS8212b or RGB SK6812 variant choose: *firmware_esp32
   
 For **SPI driven RGB LED strip** APA102: *firmware_esp32_SPI_APA102_SK9822_HD107.bin*, WS8201: *firmware_esp32_SPI_WS2801.bin*  
   
-If you want to disable your first LED because it's used as a sacrificial level shifter, please use [HyperHDR v19](https://github.com/awawa-dev/HyperHDR/pull/379)  
+To disable the first LED used as a sacrificial level shifter, use [this](https://github.com/awawa-dev/HyperHDR/pull/379) HyperHDR feature  
 
 For the RGBW firmware the white channel is automatically calculated and R,G,B channels are corrected.  
 
