@@ -1,14 +1,12 @@
 # HyperSerialESP32
-  
-Exposes USB high speed serial port at 2Mb baud for driving led strip using NeoPixelBus library. It's intended to replace slow Arduino solutions (level shifter 3.3V to 5v may be required). **Data integrity check (Fletcher's checksum) included in new 'Awa' protocol for HyperHDR. So no more random flashing caused by serial transmission errors.** That option must be checked in HyperHDR to make system works as on the screen below.  
-  
-**Make sure that your serial chip on the ESP32 can handle 2Mb speed: for example CP2102 can't as its max speed is 1Mb and you can compile a version for that speed but I think that's not the point, cheap CH340G can do it without any problems. CH9102x also should work for you, even at 4Mb speed.**  
-  
-There is also my fork named HyperSerialWLED available with the support for the AWA serial protocol at @2Mb speed for both ESP8266 and ESP32: https://github.com/awawa-dev/HyperSerialWLED Can't guarantee it will work as stable as HyperSerialESP32 because WLED has a lot of other things to do in the backgrounds (ex. handling Wifi) and timing control for the serial port could be at danger for larger number of LEDs. But you don't need to abandon all the benefits offered by the WLED which can be a big advantage for some users.  
-  
-RGB to RGBW conversion is calibrated for the neutral white channel BTF SK6812 but it can be easily changed (for cool and warm temperature) in the code. Search for "color calibration". In HyperHDR use "1.5" gamma for red, blue and green for best effect in the "Image Processing" tab.
 
+Exposes a high-speed USB serial port at 2Mb baud for driving LED strips using the NeoPixelBus library. It’s intended to replace slow Arduino-based solutions (a 3.3V to 5V level shifter may be required). **A data-integrity check (Fletcher's checksum) is included in the new 'Awa' protocol for HyperHDR, eliminating random flashing caused by serial transmission errors.** This option must be enabled in HyperHDR for the system to work correctly, as shown in the configuration screenshot below.
 
+**Make sure that the serial chip on your ESP32 can handle 2Mb baud: for example, the CP2102 cannot, as its maximum speed is 1Mb. You can compile a version for that lower speed, but that defeats the purpose. The inexpensive CH340G handles 2Mb without issues, and the CH9102x should also work — even at 4Mb.**
+
+There is also my fork, HyperSerialWLED, which includes support for the AWA serial protocol at 2Mb for both ESP8266 and ESP32: https://github.com/awawa-dev/HyperSerialWLED I can’t guarantee it will be as stable as HyperSerialESP32 because WLED performs many additional background tasks (e.g., handling Wi-Fi), and serial-port timing may become problematic with a larger number of LEDs. However, it allows you to keep all the benefits offered by WLED, which may be a significant advantage for some users.  
+  
+  
 | LED strip / Device             | HyperSerialESP32 |
 |--------------------------------|:----------------:|
 | SK6812 cold white              |       yes        |
@@ -16,16 +14,18 @@ RGB to RGBW conversion is calibrated for the neutral white channel BTF SK6812 bu
 | WS281x                         |       yes        |
 | SPI (APA102, SK9812, HD107...) |       yes        |
 
-# Example of supported boards
+## Example of supported boards
 
 **ESP32 MH-ET Live (CP2104 or CH9102x: 4Mb speed) and ESP32-S2 Lolin mini (CDC: 5Mb speed)**  
 <p align="center">
 <img src="https://user-images.githubusercontent.com/69086569/207587620-1c4c53c8-426c-486e-a6d9-d429fd1b050d.png" /><img src="https://user-images.githubusercontent.com/69086569/207587635-b7816329-0e29-47ee-a75a-bc6c41cdc51f.png" />
 </p>
 
-# Data integrity check
+## Data integrity check
   
-Why the data integrity check was introduced which causes incompatibility with other software? Because at 2Mb speed many chip-makers allow few percent error in the transmission. And we do not want to have any distracting flashes. Broken frames are abandon without showing them. At 100Hz for 250 leds approximately 1-5% of the frames are broken.
+Why the data integrity check was introduced which causes incompatibility with other software? Because at 2Mb speed many chip-makers allow few percent error in the transmission. And we do not want to have any distracting flashes. Broken frames are abandon without showing them. At 100Hz and with 250 LEDs, up to approximately 1–5% of frames may be corrupted.  
+
+---
   
 # Flashing
 
@@ -58,27 +58,38 @@ For **RGB LED strip** like WS8212b or RGB SK6812 variant choose: *firmware_esp32
   
 For **SPI driven RGB LED strip** APA102: *firmware_esp32_SPI_APA102_SK9822_HD107.bin*, WS8201: *firmware_esp32_SPI_WS2801.bin*  
   
-If you want to disable your first LED because it's used as a sacrificial level shifter, please use [HyperHDR v19](https://github.com/awawa-dev/HyperHDR/pull/379)  
+To disable the first LED used as a sacrificial level shifter, use [this](https://github.com/awawa-dev/HyperHDR/pull/379) HyperHDR feature  
 
 For the RGBW firmware the white channel is automatically calculated and R,G,B channels are corrected.  
+
+---
+
+# Pinout
   
+**ESP32:**  
+**LED output (non-SPI):** GPIO 2  
+**LED output (SPI):** GPIO 4 for Clock, GPIO 2 for Data  
+
+---
+
 # Usage in HyperHDR
 
 **In HyperHDR `Image Processing→Smoothing→Update frequency` you should do not exceed the maximum capacity of the device. Read more here: [how to get statistics](https://github.com/awawa-dev/HyperHDR/wiki/HyperSerial)**
 
 To test the maximum performance in HyperHDR, enable `Image Processing→Smoothing→Continuous output`, set a high value for `Update Frequency` in the same tab and set any color in the `Remote Control` tab as the active effect. Get the statistics and optionally adjust `Update Frequency`. After testing, you need to disable `Continuous output`and set `Update frequency`" according to your results.
   
-Configuring HyperHDR v19beta2 or above.
+Configure HyperHDR:
 - set `Refresh time` to zero
 - set `Baudrate` to 2000000
-- enabled `HyperHDR's AWA protocol`.  
+- enable `HyperHDR's AWA protocol`
+- enable `ESP8266/ESP32/Rp2040 handshake` that may help you to properly initialize the ESP board
 
 Enabling `White channel calibration` is optional, if you want to fine tune the white channel balance of your sk6812 RGBW LED strip.  
-`ESP8266/ESP32 handshake` could help you to properly initialize the ESP device and enables statistics output to the logs (you must stop the LED device first to get them).  
 
-![obraz](https://user-images.githubusercontent.com/69086569/207109594-0493fe58-3530-46bb-a0a3-31a110475ed6.png)
+<img width="600" alt="236870662-12f67d14-c2ca-4ba1-b6a3-e34c27949d19" src="https://github.com/user-attachments/assets/528defd6-ea10-44ab-81be-cd7ea6bfa79c" />
 
-   
+---
+
 # Compiling
   
 Currently we use PlatformIO to compile the project. Install [Visual Studio Code](https://code.visualstudio.com/) and add [PlatformIO plugin](https://platformio.org/).
@@ -87,13 +98,8 @@ This environment will take care of everything and compile the firmware for you. 
 But there is also an alternative and an easier way. Just fork the project and enable its Github Action. Use the online editor to make changes to the ```platformio.ini``` file, for example change default pin-outs/speed or enable multi-segments support, and save it. Github Action will compile new firmware automatically in the Artifacts archive. It has never been so easy!
 
 Tutorial: https://github.com/awawa-dev/HyperSerialESP32/wiki
-  
-# Pinout
-  
-**ESP32:**  
-**LED output (non-SPI):** GPIO 2  
-**LED output (SPI):** GPIO 4 for Clock, GPIO 2 for Data  
 
+---
 
 # Multi-Segment Wiring
 
@@ -124,6 +130,8 @@ Implementation example:
 
 ![HyperSPI](https://user-images.githubusercontent.com/85223482/222923979-f344349a-1f8b-4195-94ca-51721923359e.png)
 
+---
+
 # External relay power control
 You can configure LED power pin in the `platformio.ini` to power off LEDs while not in use.
 Review the comments at the top of the file:
@@ -132,7 +140,9 @@ Review the comments at the top of the file:
 
 Note: For static color configuration this mechanism will turn off the LEDs. To counter this enable "Continuous Output" in HyperHDR "Smoothing" module. For esp32 and relay control, you may want to disable the "Handshake" option in the Adalight HyperHDR driver to avoid the relay immediately shutting down when resetting the device while initializing the connection.
 
-# Some benchmark results
+---
+
+# Benchmark results
 
 ESP32 MH-ET LIVE mini is capable of 4Mb serial port speed and ESP32-S2 lolin mini is capable of 5Mb. But to give equal chances for a single-segment mode all models were tested using the default speed of 2Mb which should saturate Neopixel data line. Parallel multi-segment mode uses the highest option available because communication performance is critical here.
 
