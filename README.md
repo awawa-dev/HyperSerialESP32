@@ -23,7 +23,7 @@ There is also my fork, HyperSerialWLED, which includes support for the AWA seria
 
 ## Data integrity check
   
-Why the data integrity check was introduced which causes incompatibility with other software? Because at 2Mb speed many chip-makers allow few percent error in the transmission. And we do not want to have any distracting flashes. Broken frames are abandon without showing them. At 100Hz for 250 leds approximately 1-5% of the frames are broken.
+Why the data integrity check was introduced which causes incompatibility with other software? Because at 2Mb speed many chip-makers allow few percent error in the transmission. And we do not want to have any distracting flashes. Broken frames are abandon without showing them. At 100Hz and with 250 LEDs, up to approximately 1–5% of frames may be corrupted.  
 
 ---
   
