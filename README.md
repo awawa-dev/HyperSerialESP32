@@ -2,7 +2,7 @@
 
 Exposes a high-speed USB serial port at 2Mb baud for driving LED strips using the NeoPixelBus library. It’s intended to replace slow Arduino-based solutions (a 3.3V to 5V level shifter may be required). **A data-integrity check (Fletcher's checksum) is included in the new 'Awa' protocol for HyperHDR, eliminating random flashing caused by serial transmission errors.** This option must be enabled in HyperHDR for the system to work correctly, as shown in the configuration screenshot below.
 
-**Make sure that the serial chip on your ESP32 can handle 2Mb baud: for example, the CP2102 cannot, as its maximum speed is 1Mb. You can compile a version for that lower speed, but that defeats the purpose. The inexpensive CH340G handles 2Mb without issues, and the CH9102x should also work—even at 4Mb.**
+**Make sure that the serial chip on your ESP32 can handle 2Mb baud: for example, the CP2102 cannot, as its maximum speed is 1Mb. You can compile a version for that lower speed, but that defeats the purpose. The inexpensive CH340G handles 2Mb without issues, and the CH9102x should also work — even at 4Mb.**
 
 There is also my fork, HyperSerialWLED, which includes support for the AWA serial protocol at 2Mb for both ESP8266 and ESP32: https://github.com/awawa-dev/HyperSerialWLED I can’t guarantee it will be as stable as HyperSerialESP32 because WLED performs many additional background tasks (e.g., handling Wi-Fi), and serial-port timing may become problematic with a larger number of LEDs. However, it allows you to keep all the benefits offered by WLED, which may be a significant advantage for some users.  
   
