@@ -2,7 +2,7 @@
 *
 *  MIT License
 *
-*  Copyright (c) 2025 awawa-dev
+*  Copyright (c) 2021-2026 awawa-dev
 *
 *  https://github.com/awawa-dev/HyperSerialESP32
 *
