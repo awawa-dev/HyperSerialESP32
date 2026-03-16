@@ -28,7 +28,7 @@
 #ifdef NEOPIXEL_RGBW
 	typedef RgbwColor ColorDefinition;
 #elif defined(SPILED_APA102)
-	typedef DotStarColor ColorDefinition;	
+	typedef RgbwColor ColorDefinition;	
 #else
 	typedef RgbColor ColorDefinition;
 #endif
