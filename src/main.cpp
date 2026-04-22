@@ -205,7 +205,13 @@ void setup()
 	Serial.setRxBufferSize(MAX_BUFFER - 1);
 	Serial.setTimeout(50);
 	Serial.begin(SERIALCOM_SPEED);
-	while (!Serial) continue;
+	#if defined(CONFIG_IDF_TARGET_ESP32S2)
+		// Headless USB CDC hosts won't open an interactive serial monitor.
+		// Waiting forever here can stall S2 startup before the CDC port is usable.
+		delay(50);
+	#else
+		while (!Serial) continue;
+	#endif
 
 	#if defined(NEOPIXEL_RGBW) || defined(NEOPIXEL_RGB)
 		#ifdef NEOPIXEL_RGBW
@@ -288,4 +294,3 @@ void loop()
 		processData();
 	}
 }
-
