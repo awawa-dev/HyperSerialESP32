@@ -65,6 +65,14 @@
 	#elif NEOPIXEL_RGB
 		#define LED_DRIVER NeoPixelBus<NeoGrbFeature, NeoEsp32I2s0Ws2812xMethod>
 	#endif
+#elif defined(CONFIG_IDF_TARGET_ESP32S3)
+	/* ESP32-S3: NeoPixelBus has no I2S driver for this target, RMT only.
+	   Added by Cedric/Claude to support native-USB S3 boards. */
+	#ifdef NEOPIXEL_RGBW
+		#define LED_DRIVER NeoPixelBus<NeoGrbwFeature, NeoEsp32Rmt1Sk6812Method>
+	#elif NEOPIXEL_RGB
+		#define LED_DRIVER NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt1Ws2812xMethod>
+	#endif
 #else
 	#ifdef NEOPIXEL_RGBW
 		#define LED_DRIVER NeoPixelBus<NeoGrbwFeature, NeoEsp32I2s1Sk6812Method>
@@ -201,11 +209,31 @@ void setup()
 {
 	bool multicore = true;
 
+	#if defined(CONFIG_IDF_TARGET_ESP32S3)
+		// On ESP32-S3, processSerialTask now runs pinned to core 0 (see below)
+		// to avoid a conflict with the native USB CDC driver's internal task.
+		// But its tight for(;;){...; yield();} loop starves the IDLE0 task,
+		// which triggers the Task Watchdog Timer and aborts/reboots after
+		// ~10s. Disabling the watchdog for core 0's idle task avoids that.
+		// Added by Cedric/Claude.
+		disableCore0WDT();
+	#endif
+
 	// Init serial port
 	Serial.setRxBufferSize(MAX_BUFFER - 1);
 	Serial.setTimeout(50);
 	Serial.begin(SERIALCOM_SPEED);
-	while (!Serial) continue;
+	#if !defined(CONFIG_IDF_TARGET_ESP32S3)
+		while (!Serial) continue;
+	#else
+		// On ESP32-S3 native USB CDC, "Serial" can stay false until the host
+		// actively opens the port with the right DTR handshake, which some
+		// terminal tools never send -> this would hang boot forever.
+		// Wait a bounded time instead, then continue regardless.
+		// Added by Cedric/Claude.
+		unsigned long serialWaitStart = millis();
+		while (!Serial && (millis() - serialWaitStart) < 3000) continue;
+#endif
 
 	#if defined(NEOPIXEL_RGBW) || defined(NEOPIXEL_RGB)
 		#ifdef NEOPIXEL_RGBW
@@ -217,8 +245,11 @@ void setup()
 		#endif
 	#endif
 
-	#if !defined(CONFIG_IDF_TARGET_ESP32S2)
+	#if !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32S3)
 		// Display config
+		// NOTE (Cedric/Claude): disabled on ESP32-S3 too (like S2) because
+		// Serial.println() here can block indefinitely on native USB CDC
+		// before a host terminal has actively opened/drained the port.
 		Serial.println(HELLO_MESSAGE);
 		#if defined(SECOND_SEGMENT_START_INDEX)
 			SerialPort.write("SECOND_SEGMENT_START_INDEX = ");
@@ -268,7 +299,15 @@ void setup()
 			5,
 			&base.processDataHandle,
 			0);
-		// serial handler on core 1
+		// serial handler on core 0 (changed from core 1 - Cedric/Claude:
+		// on ESP32-S3 the native USB CDC driver's internal task conflicts
+		// with a user task pinned to core 1, causing a hang after a few
+		// seconds of runtime. Pinning both tasks to core 0 avoids it.)
+		#if defined(CONFIG_IDF_TARGET_ESP32S3)
+			int serialTaskCore = 0;
+		#else
+			int serialTaskCore = 1;
+		#endif
 		xTaskCreatePinnedToCore(
 			processSerialTask,
 			"processSerialTask",
@@ -276,7 +315,7 @@ void setup()
 			NULL,
 			2,
 			&base.processSerialHandle,
-			1);
+			serialTaskCore);
 	}
 }
 
