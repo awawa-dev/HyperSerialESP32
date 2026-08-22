@@ -1,29 +1,29 @@
 /* main.cpp
-	*
-	*  MIT License
-	*
-	*  Copyright (c) 2021-2026 awawa-dev
-	*
-	*  https://github.com/awawa-dev/HyperSerialESP32
 *
-	*  Permission is hereby granted, free of charge, to any person obtaining a copy
+*  MIT License
+*
+*  Copyright (c) 2021-2026 awawa-dev
+*
+*  https://github.com/awawa-dev/HyperSerialESP32
+*
+*  Permission is hereby granted, free of charge, to any person obtaining a copy
 *  of this software and associated documentation files (the "Software"), to deal
 *  in the Software without restriction, including without limitation the rights
 *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 *  copies of the Software, and to permit persons to whom the Software is
 *  furnished to do so, subject to the following conditions:
 *
-	*  The above copyright notice and this permission notice shall be included in all
+*  The above copyright notice and this permission notice shall be included in all
 *  copies or substantial portions of the Software.
 
-	*  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	*  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	*  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	*  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	*  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	*  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	*  SOFTWARE.
-	 */
+*  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+*  SOFTWARE.
+ */
 
 #include <Arduino.h>
 #include <NeoPixelBus.h>
@@ -163,7 +163,7 @@
 		public:
 		bool CanShow() {return true;}
 		void Show(bool safe) {}
-};
+	};
 #endif
 
 #define SerialPort Serial
@@ -184,30 +184,30 @@
 /**
  * @brief separete thread for handling incoming data using cyclic buffer
  *
-	 * @param parameters
+ * @param parameters
  */
 void processDataTask(void * parameters)
 {
-		for(;;)
-{
+	for(;;)
+	{
 		xSemaphoreTake(base.i2sXSemaphore, portMAX_DELAY);
 		processData();
-}
+	}
 }
 
 void processSerialTask(void * parameters)
 {
-		for(;;)
-{
+	for(;;)
+	{
 		if (serialTaskHandler() || base.queueCurrent != base.queueEnd)
-						xSemaphoreGive(base.i2sXSemaphore);
+			xSemaphoreGive(base.i2sXSemaphore);
 		yield();
-}
+	}
 }
 
 void setup()
 {
-		bool multicore = true;
+	bool multicore = true;
 
 	#if defined(CONFIG_IDF_TARGET_ESP32S3)
 		// On ESP32-S3, processSerialTask now runs pinned to core 0 (see below)
@@ -233,7 +233,7 @@ void setup()
 		// Added by Cedric/Claude.
 		unsigned long serialWaitStart = millis();
 		while (!Serial && (millis() - serialWaitStart) < 3000) continue;
-	#endif
+#endif
 
 	#if defined(NEOPIXEL_RGBW) || defined(NEOPIXEL_RGB)
 		#ifdef NEOPIXEL_RGBW
@@ -285,7 +285,7 @@ void setup()
 	#endif
 
 	if (multicore)
-{
+	{
 		// create a semaphore to synchronize threads
 		base.i2sXSemaphore = xSemaphoreCreateBinary();
 
@@ -294,11 +294,11 @@ void setup()
 		xTaskCreatePinnedToCore(
 			processDataTask,
 			"processDataTask",
-						5096,
-						NULL,
-						5,
-						&base.processDataHandle,
-						0);
+			5096,
+			NULL,
+			5,
+			&base.processDataHandle,
+			0);
 		// serial handler on core 0 (changed from core 1 - Cedric/Claude:
 		// on ESP32-S3 the native USB CDC driver's internal task conflicts
 		// with a user task pinned to core 1, causing a hang after a few
@@ -311,19 +311,20 @@ void setup()
 		xTaskCreatePinnedToCore(
 			processSerialTask,
 			"processSerialTask",
-						4096,
-						NULL,
-						2,
-						&base.processSerialHandle,
-						serialTaskCore);
-}
+			4096,
+			NULL,
+			2,
+			&base.processSerialHandle,
+			serialTaskCore);
+	}
 }
 
 void loop()
 {
-		if (base.processDataHandle == nullptr && base.processSerialHandle == nullptr)
-{
+	if (base.processDataHandle == nullptr && base.processSerialHandle == nullptr)
+	{
 		serialTaskHandler();
 		processData();
+	}
 }
-}
+
